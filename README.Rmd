@@ -3,14 +3,10 @@ title: "Disentangling length-dependent and length-independent variations in surv
 authors: "Boulaire et al. (in prep)"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    theme: united
-  pdf_document:
-    toc: true
-    toc_depth: 3
-    theme: united
 ---
 
 ```{r setup, include=FALSE}
