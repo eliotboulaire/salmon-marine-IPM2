@@ -4,4 +4,6 @@
 .Ruserdata
 *.pptx
 *.docx
-*.qs
+*.xlsx
+*.tmp
+saves/*/*.qs
