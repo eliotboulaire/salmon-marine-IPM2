@@ -47,7 +47,7 @@ body length; global change; integral projection model; integrated population mod
 
 ***Eliot BOULAIRE***\*\*\
 UMR DECOD, Institut Agro, Rennes, France\
-pôle MIAME, \
+pôle MIAME,\
 eliot.boulaire\@institut-agro.fr
 
 ***Marie NEVOUX***\*\
@@ -99,8 +99,7 @@ MCMC via NIMBLE, which requires a working C++ toolchain (Rtools on Windows; Xcod
 | Variance partitioning          | `relaimpo` (2.2-7)              |
 | Figures                        | `ggplot2`                       |
 
-Each script auto-installs any missing packages via a small `pkginstall()` helper
-at the top of the file.
+Each script auto-installs any missing packages via a small `pkginstall()` helper at the top of the file.
 
 ------------------------------------------------------------------------
 
@@ -108,7 +107,7 @@ at the top of the file.
 
 ```{r echo=FALSE}
 
-fs::dir_tree(".", recurse = 3, regexp = "\\.(png|docx|pdf|xlsx|pptx|tif|tmp)$", invert = TRUE)
+fs::dir_tree(".", recurse = 3, regexp = "\\.(png|docx|xlsx|pptx|tif|tmp)$", invert = TRUE)
 ```
 
 ------------------------------------------------------------------------
@@ -136,7 +135,7 @@ fs::dir_tree(".", recurse = 3, regexp = "\\.(png|docx|pdf|xlsx|pptx|tif|tmp)$", 
 -   *data_Scorff_CMR.csv* - csv file of the original data file for abundance estimates.
 
 | Columns | Description |
-|--------------|----------------------------------------------------------|
+|-----------------|-------------------------------------------------------|
 | stage | Life cycle stage, "Smolt" downstream migrating juvenile, "1SW" first year returning adult, "2SW" second year returning adult. |
 | cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW). Datasets consist of years between 1995 and 2019. |
 | mean | The stage & year mean abundance estimate from the lognormal CMR model. |
@@ -145,7 +144,7 @@ fs::dir_tree(".", recurse = 3, regexp = "\\.(png|docx|pdf|xlsx|pptx|tif|tmp)$", 
 -   *data_Scorff_ORE.csv* - csv file of the original data file for scale length and scale molecular sexing.
 
 | Columns | Description |
-|-------------|-----------------------------------------------------------|
+|----------------|--------------------------------------------------------|
 | index | Number for each distinct individual scale |
 | stage | Life cycle stage: "Smolt" downstream migrating juvenile, "Adults" upstream migrating adults. |
 | cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW): Datasets consist of years between 1995 and 2019. |
