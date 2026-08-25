@@ -1,106 +1,95 @@
--   [Introduction](#introduction)
-    -   [What is this ?](#what-is-this)
--   [Overview](#overview)
-    -   [Abstract](#abstract)
-    -   [Key words](#key-words)
-    -   [Author(s)](#authors)
-    -   [Corresponding author](#corresponding-author)
-    -   [Acknowledgements](#acknowledgements)
--   [Data availability & requirements](#data-availability-requirements)
-    -   [Data availability](#data-availability)
-    -   [Software and packages
-        requirement](#software-and-packages-requirement)
--   [File & folder structure](#file-folder-structure)
--   [File descriptions](#file-descriptions)
-    -   [R project](#r-project)
-    -   [Manuscript](#manuscript)
-    -   [Data](#data)
-        -   [Rawdata](#rawdata)
-        -   [Realdata](#realdata)
-        -   [R functions](#r-functions)
-        -   [Nimble functions](#nimble-functions)
-    -   [Models](#models)
-    -   [Run](#run)
-    -   [Saves](#saves)
-    -   [Graphs](#graphs)
-        -   [Figure](#figure)
-        -   [Table](#table)
-    -   [Results](#results)
-        -   [General](#general-2)
-        -   [M\[0-9\]/](#m0-9-1)
-        -   [M1/](#m1)
--   [Execution instructions](#execution-instructions)
--   [License](#license)
+-   [Disentangling length-dependent and length-independent variations in
+    survival and maturation in Atlantic
+    salmon](#disentangling-length-dependent-and-length-independent-variations-in-survival-and-maturation-in-atlantic-salmon)
+    -   [Introduction](#introduction)
+        -   [What is this ?](#what-is-this)
+    -   [Overview](#overview)
+        -   [Abstract](#abstract)
+        -   [Key words](#key-words)
+        -   [Author(s)](#authors)
+        -   [Corresponding author](#corresponding-author)
+        -   [Acknowledgements](#acknowledgements)
+    -   [Data availability &
+        requirements](#data-availability-requirements)
+        -   [Data availability](#data-availability)
+        -   [Software and packages
+            requirement](#software-and-packages-requirement)
+    -   [File & folder structure](#file-folder-structure)
+    -   [File descriptions](#file-descriptions)
+        -   [R project](#r-project)
+        -   [Manuscript](#manuscript)
+        -   [Data](#data)
+        -   [Functions](#functions)
+        -   [Models](#models)
+        -   [Run](#run)
+        -   [Saves](#saves)
+        -   [Graphs](#graphs)
+        -   [Results](#results)
+    -   [Execution instructions](#execution-instructions)
+    -   [License](#license)
 
 ------------------------------------------------------------------------
 
-# Introduction
+# Disentangling length-dependent and length-independent variations in survival and maturation in Atlantic salmon
 
-## What is this ?
+## Introduction
 
-Code and workflow accompanying the manuscript. The project implements an
-Integrated Integral Projection Model (IPM²) for the marine phase of the
-Scorff River Atlantic salmon (*Salmo salar*) population, inferring
-length-dependent survival and maturation from abundance,
-molecular-sexing and scale-length data.
+### What is this ?
+
+Code and workflow accompanying the manuscript: “Disentangling
+length-dependent and length-independent temporal variation in survival
+and maturation in Atlantic salmon”.  
+The project implements an Integrated Integral Projection Model (IPM²)
+for the marine phase of the Scorff River Atlantic salmon (*Salmo salar*)
+population, inferring length-dependent survival and maturation from
+abundance, molecular-sexing and scale-length data.
 
 ------------------------------------------------------------------------
 
-# Overview
+## Overview
 
-## Abstract
+### Abstract
 
-1.  Identifying the proximate mechanisms through which environmental
-    changes shape population dynamics is critical to forecast responses
-    under global change and support ecosystem-based management.
+Identifying the proximate mechanisms through which environmental changes
+shape population dynamics is critical to analyse and forecast responses
+under global change and support ecosystem-based management. Declines in
+size-at-age have been widely reported across taxa, but understanding how
+temporal variations in body size at key life stages propagate through
+the life cycle and shape population dynamics remains challenging,
+especially for species with partially observable life cycles. Atlantic
+salmon (*Salmo salar*) have undergone concurrent declines in abundance,
+length-at-age, and sea age at maturation, largely attributed to
+deteriorating marine growth during the unobservable oceanic phase. The
+marine phase of Atlantic salmon is shaped by a complex interplay between
+survival and maturation schedules, yet the relative contributions of
+body size to this interplay remain poorly understood. We developed a
+Bayesian Integrated Integral Projection Model (IPM²) that integrates 24
+years (1996-2019) of monitoring data from the Scorff River (France),
+combining abundance estimates, molecular sexing, and length-at-stage
+distributions reconstructed from archived fish scales. The model allowed
+us to disentangle the relative contributions of length-dependent and
+length-independent processes to temporal variation in survival and
+maturation, separately for males and females. Length-at-stage explained
+a substantial part of the pathways to variation in marine vital rates,
+though considerable length-independent variation remained. Larger
+individuals consistently experienced higher survival and higher
+maturation than smaller conspecifics, with females maturing at lower
+rates than males for the same length. However, temporal variation in the
+smolt length distribution explained only 9% of the temporal variations
+in marine survival. In contrast, temporal variation in the post-smolt
+length distribution explained 45% of the temporal variation in marine
+maturation for females and 21% for males. The IPM² framework is
+transferable to other salmon and fish populations with partially
+observable life cycles to understand how changing growth conditions
+shape population dynamics under environmental change, and for building
+climate-enhanced population dynamics and stock assessment models.
 
-2.  Global change is driving widespread declines in size-at-age across
-    taxa. Therefore, understanding how variations in the size
-    distribution at key life stages propagate through the life cycle and
-    shape population dynamics is critical. However, this remains
-    particularly challenging for species with partially observable life
-    cycles.
+### Key words
 
-3.  Atlantic salmon (*Salmo salar*) have undergone concurrent declines
-    in abundance, length-at-age, and sea age at maturation, largely
-    attributed to deteriorating marine growth during an unobservable
-    oceanic phase. In this paper, we investigate how temporal variation
-    in the distribution of body length at seaward migration (smolts) and
-    after the first summer at sea (post-smolts) drive temporal variation
-    in marine survival and maturation.
+body size; integral projection model; integrated population model;
+life-history; *Salmo salar*; temporal variation; vital rates
 
-4.  We developed a Bayesian Integrated Integral Projection Model (IPM²)
-    that integrates 24 years (1996-2019) of monitoring data from the
-    Scorff River (France), combining abundance estimates, molecular
-    sexing, and length-at-stage distributions reconstructed from
-    archived fish scales. The framework inferred latent length-dependent
-    survival and maturation and quantified the relative contribution of
-    the variation in length distribution to temporal variation in those
-    vital rates.
-
-5.  Results showed that length-at-stage explained a substantial part of
-    the pathways to variations in vital rates, yet considerable
-    length-independent variation remained. Larger individuals
-    consistently experienced higher survival and higher maturation than
-    smaller conspecifics, with females maturing at lower rates than
-    males for the same length. Temporal variations in the smolt length
-    distribution explained only 9% of the temporal variations in marine
-    survival. In contrast, the variation in the post-smolt length
-    distribution explained 45% of the temporal variation in maturation
-    rates of females and 21% in males.
-
-6.  The IPM² framework is transferable to other salmon and fish
-    populations and offers a mechanistic basis for climate-enhanced
-    population dynamics and stock assessment in length-structured
-    species.
-
-## Key words
-
-body length; global change; integral projection model; integrated
-population model; life-history; *Salmo salar*; temporal variations;
-vital rates
-
-## Author(s)
+### Author(s)
 
 ***Eliot BOULAIRE***\*\*  
 UMR DECOD, Institut Agro, Rennes, France  
@@ -115,16 +104,16 @@ marie.nevoux@inrae.fr
 UMR DECOD, Institut Agro, Rennes, France  
 etienne.rivot@institut-agro.fr
 
-**\***M. NEVOUX & E. RIVOT share senior co-authorship
+\*M. NEVOUX & E. RIVOT share senior co-authorship
 
-## Corresponding author
+### Corresponding author
 
 \*\*Comments and requests should be addressed to Eliot BOULAIRE:
 eliot.boulaire@institut-agro.fr or eliotboulaire@gmail.com. All material
-is free of use, but I would appreciate being told, and this dataset and
+is free of use, but I would appreciate being told, and this dataet and
 the matching paper cited if appropriate.
 
-## Acknowledgements
+### Acknowledgements
 
 We are grateful to all those involved in the preparation and collection
 of the data used in this study, including both current and former
@@ -139,9 +128,9 @@ Brittany Region as well as OFB for funding this study.
 
 ------------------------------------------------------------------------
 
-# Data availability & requirements
+## Data availability & requirements
 
-## Data availability
+### Data availability
 
 Raw data are publicly archived and must be placed under `data/rawdata/`
 (see structure below) before running:
@@ -157,30 +146,31 @@ Raw data are publicly archived and must be placed under `data/rawdata/`
     (<https://doi.org/10.15454/D3ODJM>),
 
 -   IPM² model (code & results; this repository): French data gouv
-    archive (XXX) & GitHub repository (XXX).
+    archive (XXX) & GitHub repository
+    (<https://github.com/eliotboulaire/salmon-marine-IPM2>).
 
-## Software and packages requirement
+### Software and packages requirement
 
-R version 4.4.2 (or later).  
-MCMC via NIMBLE, which requires a working C++ toolchain (Rtools on
-Windows; Xcode command-line tools on macOS; `build-essential` on Linux).
+R version 4.4.2 (or later). Rstudio 2024.12.0.467 (or later).  
+MCMC via NIMBLE, which requires a working C++ toolchain (Rtools 4.4 or
+later on Windows).
 
-| Purpose                        | Packages                        |
-|--------------------------------|---------------------------------|
-| Data wrangling                 | `dplyr` (), `tidyr` ()          |
-| Running model (MCMC)           | `nimble` (1.3.0), `parallel` () |
-| Saving models output           | `qs` ()                         |
-| Model diagnostics & comparison | `ggmcmc` (1.5.1.1), `coda` ()   |
-| Mode comparison                | `loo` (2.8.0)                   |
-| Variance partitioning          | `relaimpo` (2.2-7)              |
-| Figures                        | `ggplot2`                       |
+| Purpose | Packages |
+|------------------------------------|------------------------------------|
+| Data wrangling | `dplyr` (1.1.4); `tidyr` (1.3.1); `purrr` (1.0.4) |
+| Running model (MCMC) | `nimble` (1.4.0); `parallel` (4.4.1); `coda` (0.19.4.1) |
+| Saving models input & output | `qs` (0.27.3) |
+| Model diagnostics & comparison | `ggmcmc` (1.5.1.1); `coda` (0.19.4.1) |
+| Model comparison | `loo` (2.8.0) |
+| Variance partitioning | `relaimpo` (2.2.7) |
+| Figures | `ggplot2` (3.5.2); `ggridges` (3.5.2); `ggnewscale` (0.5.2) |
 
 Each script auto-installs any missing packages via a small
 `pkginstall()` helper at the top of the file.
 
 ------------------------------------------------------------------------
 
-# File & folder structure
+## File & folder structure
 
     ## .
     ## ├── data
@@ -363,8 +353,24 @@ Each script auto-installs any missing packages via a small
     ## │   │   └── model_code.R
     ## │   └── M9
     ## │       └── model_code.R
+    ## ├── README.md
     ## ├── README.Rmd
     ## ├── results
+    ## │   ├── fig1.pdf
+    ## │   ├── fig2.pdf
+    ## │   ├── fig3.pdf
+    ## │   ├── fig4.pdf
+    ## │   ├── fig4_A.pdf
+    ## │   ├── fig4_B.pdf
+    ## │   ├── fig5.pdf
+    ## │   ├── fig5_A.pdf
+    ## │   ├── fig5_B.pdf
+    ## │   ├── fig6.pdf
+    ## │   ├── fig6_A.pdf
+    ## │   ├── fig6_B.pdf
+    ## │   ├── figA1.1.pdf
+    ## │   ├── figA1.2.pdf
+    ## │   ├── figA1.3.pdf
     ## │   ├── M0
     ## │   │   ├── tabA4.1.csv
     ## │   │   └── tabA4.2.csv
@@ -434,35 +440,34 @@ Each script auto-installs any missing packages via a small
 
 ------------------------------------------------------------------------
 
-# File descriptions
+## File descriptions
 
-## R project
+### R project
 
 *MODESTA.Rproj* - R project that you need to simplify the running of all
 the scripts.
 
-## Manuscript
+### Manuscript
 
 *Preprint_Manusrcipt.pdf* - PDF of the preprint, you can also check :
 
--   <https://www.biorxiv.org/content/10.64898/2025.12.30.696970v1> (Link
-    to the preprint),
+-   XXX (Link to the preprint),
 
 -   XXX (Link to the final publication).
 
-## Data
+### Data
 
-### Rawdata
+#### Rawdata
 
-#### General
+##### General
 
 -   *data_Scorff_CMR.csv* - csv file of the original data file for
     abundance estimates.
 
 | Columns | Description |
-|---------------|---------------------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | stage | Life cycle stage, “Smolt” downstream migrating juvenile, “1SW” first year returning adult, “2SW” second year returning adult. |
-| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW). Datasets consist of years between 1995 and 2019. |
+| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW). dataets consist of years between 1996 and 2019. |
 | mean | The stage & year mean abundance estimate from the lognormal CMR model. |
 | sd | The stage & year standard-deviation abundance estimate from the lognormal CMR model. |
 
@@ -470,77 +475,74 @@ the scripts.
     length and scale molecular sexing.
 
 | Columns | Description |
-|--------------|----------------------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | index | Number for each distinct individual scale |
 | stage | Life cycle stage: “Smolt” downstream migrating juvenile, “Adults” upstream migrating adults. |
-| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW): Datasets consist of years between 1995 and 2019. |
+| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW): dataets consist of years between 1996 and 2019. |
 | sexe | Sex of the individual (not all individual where sexed): F for females, M for males and NA otherwise. |
 | age | Age inside each stage: “1SW” or “2SW” for adults and “Smolt” for “Smolt” as all ages where pooled together. |
 | migration | Scale length at the migration (when smolt migrates downstream to the sea): The mark was taken from adult scales retrospectively, for smolts it’s considered the edge of the scale. |
 | end1sum | Scale length at the end of the first summer (when post-smolt are believed to “choose” between migrating = 1SW or waiting another year = 2SW : The mark was taken from adult scales retrospectively. |
 
 -   *data_create.R* - R script reading both *data_Scorff* files to
-    create datasets used in the model (*LogN*, *Ns*, and *S*)
-
-<!-- -->
-
--   *data_save.R* - R script using all datasets for the model (*LogN*,
+    create dataets used in the model (*LogN*, *Ns*, and *S*)
+-   *data_save.R* - R script using all dataets for the model (*LogN*,
     *Ns*, and *S*) to create model elements *data.qs* and *const.qs*
 
-#### abundances/
+##### abundances/
 
 -   *LogN1.csv* - csv of the estimated abundance of smolts in the Scorff
-    river between cohort year 1995 and 2019 by the CMR model
+    river between cohort year 1996 and 2019 by the CMR model
 
 -   *LogN2.csv* - csv of the estimated abundance of 1SW in the Scorff
-    river between cohort year 1995 and 2019 by the CMR model
+    river between cohort year 1996 and 2019 by the CMR model
 
 -   *LogN3.csv* - csv of the estimated abundance of 2SW in the Scorff
-    river between cohort year 1995 and 2019 by the CMR model
+    river between cohort year 1996 and 2019 by the CMR model
 
-#### sexes/
+##### sexes/
 
 -   *Ns1.csv* - csv of the genotyped individual scales of smolts in the
-    Scorff river between cohort year 1995 and 2019
+    Scorff river between cohort year 1996 and 2019
 
 -   *Ns2.csv* - csv of the genotyped individual scales of 1SW in the
-    Scorff river between cohort year 1995 and 2019
+    Scorff river between cohort year 1996 and 2019
 
 -   *Ns3.csv* - csv of the genotyped individual scales of 2SW in the
-    Scorff river between cohort year 1995 and 2019
+    Scorff river between cohort year 1996 and 2019
 
-#### scales/
+##### scales/
 
 -   *S1.csv* - csv of the individual scale length of the smolts (from
-    smolt scales) in the Scorff river between cohort year 1995 and 2019
+    smolt scales) in the Scorff river between cohort year 1996 and 2019
 
 -   *S1surv.csv* - csv of the individual scale length of the surviving
     smolts (from adult scales) in the Scorff river between cohort year
-    1995 and 2019
+    1996 and 2019
 
 -   *S2.csv* - csv of the individual scale length of the post-smolts
-    (from adult scales) in the Scorff river between cohort year 1995 and
+    (from adult scales) in the Scorff river between cohort year 1996 and
     2019
 
 -   *S2m.csv* - csv of the individual scale length of the maturing
     post-smolts (from 1SW adult scales) in the Scorff river between
-    cohort year 1995 and 2019
+    cohort year 1996 and 2019
 
 -   *S2nm.csv* - csv of the individual scale length of the non-maturing
     post-smolts (from 2SW adult scales) in the Scorff river between
-    cohort year 1995 and 2019
+    cohort year 1996 and 2019
 
-### Realdata
+#### Realdata
 
 Composed of models folders : M\[0-9\]/
 
-#### General
+##### General
 
--   *data.qs* - qs file of all the datas used in the model
+-   *data.qs* - qs file of all the data used in the model
 
 -   *const.qs* - qs file of all the constants used in the model
 
-#### M\[0-9\]/
+##### M\[0-9\]/
 
 -   *monitor1.qs* - qs file of all monitored estimated parameters for
     results
@@ -556,11 +558,11 @@ Composed of models folders : M\[0-9\]/
 -   *inits_nchains.qs* - qs file of starting values for all parameters
     to start all the MCMC chains
 
-    ## Functions
+### Functions
 
-### R functions
+#### R functions
 
--   *f_fillNA.R* - R function that fill the scale length datasets with
+-   *f_fillNA.R* - R function that fill the scale length dataets with
     *NA* as all years don’t have the same sample size
 
 -   *f_geninit.R* - R function that generates initial values for high
@@ -570,7 +572,7 @@ Composed of models folders : M\[0-9\]/
     depending to calculate the min and max values of scale length
     structure and ensure to include extreme values
 
-### Nimble functions
+#### Nimble functions
 
 -   *nf_l.R* - nimbleFunction that calculate the mean length within each
     length class based on the mean and the sd of an assumed gaussian
@@ -585,13 +587,13 @@ Composed of models folders : M\[0-9\]/
     based on the number of individuals within each length class and the
     mean length within each length class.
 
-## Models
+### Models
 
 Composed of models folders : M\[0-9\]/
 
--   *model_code.R* - R script of the different models
+-   *model_code.R* - R code of the different models
 
-## Run
+### Run
 
 -   *model_save.R* - R script used before running the model to set up
     all the variables before running the model. It construct the
@@ -601,7 +603,7 @@ Composed of models folders : M\[0-9\]/
 
 -   *debug_model.R* - R script to debug any problem when running a model
 
-## Saves
+### Saves
 
 Composed of models folders : M\[0-9\]/
 
@@ -611,91 +613,148 @@ Composed of models folders : M\[0-9\]/
 
 -   *run_info.txt* - txt about the information of the running model
 
-## Graphs
+### Graphs
 
-### Figure
+#### Figure
 
--   *fig4_structure.R* -
+-   *fig4_structure.R* - R script to recreate Figure 4: Annual variation
+    in length distribution
 
--   *fig5_size.R* -
+-   *fig5_size.R* - R script to recreate Figure 5: Annual
+    length-dependent vital rates
 
--   *fig6_effects.R* -
+-   *fig6_effects.R* - R script to recreate Figure 6: Annual variation
+    in population-level vital rates
 
--   *figA1_data.R* -
+-   *figA1_data.R* - R script to recreate figures of Annexe 1 (A1.1;
+    A1.2 & A1.3): Annual data values
 
--   *figA5_fit.R* -
+-   *figA5_fit.R* - R script to recreate figures of Annexe 5.1 (A5.1.1;
+    A5.1.2 & A5.1.3): Annual estimated posterior distributions against
+    data values
 
--   *figA7_cor.R* -
+-   *figA7_cor.R* - R script to recreate figures of Annexe 7.1 (A7.1.1 &
+    A7.1.2): Distribution of Pearson correlations between the
+    sex-specific parameters of maturation
 
--   *figA7_scatter.R* -
+-   *figA7_scatter.R* - R script to recreate figures of Annexe 7.2
+    (A7.2.1 & A7.2.2): Annual variation in length-dependent effect on
+    population-level vital rates
 
-### Table
+#### Table
 
--   *tab1_loo.R* -
+-   *tab1_loo.R* - R script to recreate Table 1: PSIS-LOO model
+    comparison for the influence of sex, length-independent, and
+    length-dependent effects on vital rates modelling
 
--   *tabA1_data.R* -
+-   *tabA1_data.R* - R script to recreate tables of Annexe 1 (A1.2 &
+    A1.3): Number of scale samples analysed to characterise sex-ratios
+    and length distributions
 
--   *tabA4_conv.R* -
+-   *tabA4_conv.R* - R script to recreate table of Annexe 4 (A4.1):
+    Convergence diagnosis of each model (Gelman-Rubin-Brooks diagnostic,
+    Geweke diagnostic & ESS)
 
--   *tabA4_sum.R* -
+-   *tabA4_sum.R* - R script to recreate table of Annexe 4 (A4.2):
+    Estimated parameters summaries of each model
 
--   *tabA5_ppc-abund.R* -
+-   *tabA5_ppc-abund.R* - R script to recreate table of Annexe 5.2
+    (A5.2.1): Posterior Predictive Check (PPC) of abundance estimates
 
--   *tabA5_ppc-sex.R* -
+-   *tabA5_ppc-sex.R* - R script to recreate table of Annexe 5.2
+    (A5.2.2): Posterior Predictive Check (PPC) of sex-ratio data
 
--   *tabA5_ppc-length.R* -
+-   *tabA5_ppc-length.R* - R script to recreate table of Annexe 5.2
+    (A5.2.3; A5.2.4; A5.2.5): Posterior Predictive Check (PPC) of
+    length-distribution data. 3) Proportions; 4) Mean length; 5) 95% IQR
 
--   *tabA5_ppc-alpha.R* -
+-   *tabA5_ppc-alpha.R* - R script to recreate table of Annexe 5.2
+    (A5.2.6): Posterior Predictive Check (PPC) of vital rates alpha
+    parameters estimates
 
-## Results
+### Results
 
 Composed of models folders : M\[0-9\]/
 
-### General
+#### General
 
--   *tab1.csv* -
+-   *tab1.csv* - Table 1: PSIS-LOO model comparison for the influence of
+    sex, length-independent, and length-dependent effects on vital rates
+    modelling
 
-### M\[0-9\]/
+#### M\[0-9\]/
 
--   *figA5.1.1.pdf* -
+-   *figA5.1.1.pdf* - Figure A5.1.1: Annual estimated abundance
+    posterior distributions against data values
 
--   *figA5.1.2.pdf* -
+-   *figA5.1.2.pdf* - Figure A5.1.2: Annual estimated sex-ratio
+    posterior distributions against data values
 
--   *figA5.1.3.pdf* -
+-   *figA5.1.3.pdf* - Figure A5.1.3: Annual estimated
+    length-distribution posterior distributions against data values
 
 <!-- -->
 
--   *tabA4.1.csv* -
+-   *tabA4.1.csv* - Table A4.1: Convergence diagnosis of each model
+    (Gelman-Rubin-Brooks diagnostic, Geweke diagnostic & ESS)
 
--   tabA4.2.csv *-*
+-   tabA4.2.csv *-* Table A4.2: Estimated parameters summaries of each
+    model
 
-### M1/
+#### M1/
 
--   *tabA5.2.1.pdf* -
+-   *tabA5.2.1.pdf* - Table A5.2.1: Posterior Predictive Check (PPC) of
+    abundance estimates
 
--   *tabA5.2.2.pdf* -
+-   *tabA5.2.2.pdf* - Table A5.2.2: Posterior Predictive Check (PPC) of
+    sex-ratio data
 
--   *tabA5.2.3.pdf* -
+-   *tabA5.2.3.pdf* - Table A5.2.3: Posterior Predictive Check (PPC) of
+    length-distribution data using proportions test
 
--   *tabA5.2.4.pdf* -
+-   *tabA5.2.4.pdf* - Table A5.2.4: Posterior Predictive Check (PPC) of
+    length-distribution data using mean length test
 
--   *tabA5.2.5.pdf* -
+-   *tabA5.2.5.pdf* - Table A5.2.5: Posterior Predictive Check (PPC) of
+    length-distribution data using 95% IQR test
 
--   *tabA5.2.6A.pdf* -
+-   *tabA5.2.6A.pdf* - Table A5.2.6A: Posterior Predictive Check (PPC)
+    of survival alpha parameter estimates
 
--   *tabA5.2.6B.pdf* -
+-   *tabA5.2.6B.pdf* - Table A5.2.6B: Posterior Predictive Check (PPC)
+    of maturation alpha parameters estimates
 
 ------------------------------------------------------------------------
 
-# Execution instructions
+## Execution instructions
 
-You need to run
+1.  You first need to run *data_create.R*, *data_save.R* (at this step
+    you can also check data using *figA1_data.R* & *tabA1_data.R*).
+
+2.  You will also need to run the *model_save.R*.
+
+3.  Then you can use the *run_model.R* script (if any issues occur,
+    please verify previous script and use the *debug_model.R*).
+
+4.  Finally, when *MCMC.qs* and *run_info.txt* output are created, you
+    can use the graphs script. We recommend the following order:
+
+    1.  *tabA4_conv.R* & *tabA4_sum.R*
+
+    2.  *tab1_loo.R*
+
+    3.  *figA5_fit.R* & *tabA5_ppc-abund.R*; *tabA5_ppc-sex.R*;
+        *tabA5_ppc-length.R*; *tabA5_ppc-alpha.R*
+
+    4.  *fig4_structure.R*; *fig5_size.R* & *fig6_effects.R*
+
+    5.  *figA7_cor.R* & *figA7_scatter.R*
 
 ------------------------------------------------------------------------
 
-# License
+## License
 
 The content of this project itself is licensed under the [GNU GPL v3.0
 license](https://www.gnu.org/licenses/gpl-3.0.en.html), except the
-datasets which are under the [Creative Commons Attribution 4.0
+dataets which are under the [Creative Commons Attribution 4.0
 license](https://creativecommons.org/licenses/by/4.0/).

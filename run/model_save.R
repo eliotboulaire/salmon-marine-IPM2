@@ -32,7 +32,7 @@ pkginstall <- function(packages) {
     }
   }
 }
-pkginstall(c("nimble", "parallel", "coda", "qs"))
+pkginstall(c("nimble", "coda", "qs"))
 
 ## -----------------------------------------------------------------------------
 ## 1. Define project settings
