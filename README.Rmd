@@ -1,5 +1,5 @@
 ---
-title: "Disentangling length-dependent and length-independent variations in survival and maturation in Atlantic salmon"
+title: "Disentangling length-dependent and length-independent temporal variation in survival and maturation in Atlantic salmon"
 authors: "Boulaire et al. (in prep)"
 date: "`r Sys.Date()`"
 output:
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ------------------------------------------------------------------------
 
-# Disentangling length-dependent and length-independent variations in survival and maturation in Atlantic salmon
+# Disentangling length-dependent and length-independent temporal variation in survival and maturation in Atlantic salmon
 
 ## Introduction
 
@@ -100,148 +100,162 @@ Each script auto-installs any missing packages via a small `pkginstall()` helper
 
 ```{r echo=FALSE}
 
-fs::dir_tree(".", recurse = 3, regexp = "\\.(png|docx|xlsx|pptx|tif|tmp)$", invert = TRUE)
+fs::dir_tree(".", recurse = 3, regexp = "\\.(docx|xlsx|pptx|tif|tmp)$", invert = TRUE)
 ```
 
 ------------------------------------------------------------------------
 
 ## File descriptions
 
-### R project
+*salmon-marine-IPM2.Rproj* - RStudio project file; open this first so all scripts run with the project root as the working directory.
 
-*MODESTA.Rproj* - R project that you need to simplify the running of all the scripts.
+### Manuscript/
 
-### Manuscript
-
-*Preprint_Manusrcipt.pdf* - PDF of the preprint, you can also check :
+*Preprint_Manusrcipt.pdf* - PDF of the preprint. See also:
 
 -   XXX (Link to the preprint),
 
 -   XXX (Link to the final publication).
 
-### Data
+### Data/
 
-#### Rawdata
+A folder with all the data needed for the article, see Data availability for original archives. Organised in two subfolders `rawdata/` (original and filtered data from archives) and `realdata/` (formatted files for model fitting).
 
-##### General
+#### Rawdata/
 
--   *data_Scorff_CMR.csv* - csv file of the original data file for abundance estimates.
+A subfolder organised with original data file and filtered data files per data type and stages `abundances/`, `sexes`/, and `scales/`.
 
-| Columns | Description |
-|------------------|------------------------------------------------------|
-| stage | Life cycle stage, "Smolt" downstream migrating juvenile, "1SW" first year returning adult, "2SW" second year returning adult. |
-| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW). dataets consist of years between 1996 and 2019. |
-| mean | The stage & year mean abundance estimate from the lognormal CMR model. |
-| sd | The stage & year standard-deviation abundance estimate from the lognormal CMR model. |
-
--   *data_Scorff_ORE.csv* - csv file of the original data file for scale length and scale molecular sexing.
+-   *data_Scorff_CMR.csv* - original data file for abundance estimates.
 
 | Columns | Description |
-|------------------|------------------------------------------------------|
-| index | Number for each distinct individual scale |
-| stage | Life cycle stage: "Smolt" downstream migrating juvenile, "Adults" upstream migrating adults. |
-| cohort | The year of downstream migrating juvenile (smolt) and returning adults (1SW & 2SW): dataets consist of years between 1996 and 2019. |
-| sexe | Sex of the individual (not all individual where sexed): F for females, M for males and NA otherwise. |
-| age | Age inside each stage: "1SW" or "2SW" for adults and "Smolt" for "Smolt" as all ages where pooled together. |
-| migration | Scale length at the migration (when smolt migrates downstream to the sea): The mark was taken from adult scales retrospectively, for smolts it's considered the edge of the scale. |
-| end1sum | Scale length at the end of the first summer (when post-smolt are believed to "choose" between migrating = 1SW or waiting another year = 2SW : The mark was taken from adult scales retrospectively. |
+|--------------------|----------------------------------------------------|
+| stage | Life-cycle stage: "Smolt" (downstream-migrating juvenile), "1SW" (adult returning after one sea-winter), "2SW" (adult returning after two sea-winters). |
+| cohort | Year of smolt migration (smolts) or return (1SW, 2SW); 1996–2019. |
+| mean | Mean abundance estimate for the stage and year, from the lognormal CMR model. |
+| sd | Standard deviation of the abundance estimate for the stage and year, from the lognormal CMR model. |
 
--   *data_create.R* - R script reading both *data_Scorff* files to create dataets used in the model (*LogN*, *Ns*, and *S*)
--   *data_save.R* - R script using all dataets for the model (*LogN*, *Ns*, and *S*) to create model elements *data.qs* and *const.qs*
+-   *data_Scorff_ORE.csv* - original data file for scale length and molecular sexing.
+
+| Columns | Description |
+|--------------------|----------------------------------------------------|
+| index | Identifier for each individual scale. |
+| stage | Life-cycle stage: "Smolt" (downstream-migrating juvenile) or "Adults" (upstream-migrating adults). |
+| cohort | Year of smolt migration (smolts) or return (adults); 1996–2019. |
+| sexe | Sex of the individual: F (female), M (male), or NA (not sexed). |
+| age | Age within stage: "1SW" or "2SW" for adults; "Smolt" for smolts (all freshwater ages pooled). |
+| migration | Scale length at seaward migration. Measured retrospectively from the river–sea transition mark on adult scales; for scales sampled from smolts, taken as the scale edge. |
+| end1sum | Scale length at the end of the first summer at sea (the maturation "decision" point: mature and return as 1SW, or remain at sea and return as 2SW). Measured retrospectively from adult scales. |
+
+-   *data_create.R* - reads both *data_Scorff* files to build the datasets used by the model (*LogN*, *Ns*, *S*).
+-   *data_save.R* - assembles those datasets (*LogN*, *Ns*, *S*) into the model inputs *data.qs* and *const.qs*.
 
 ##### abundances/
 
--   *LogN1.csv* - csv of the estimated abundance of smolts in the Scorff river between cohort year 1996 and 2019 by the CMR model
+CMR-estimated abundances in the Scorff River, cohort years 1996–2019:
 
--   *LogN2.csv* - csv of the estimated abundance of 1SW in the Scorff river between cohort year 1996 and 2019 by the CMR model
+-   *LogN1.csv* - smolts.
 
--   *LogN3.csv* - csv of the estimated abundance of 2SW in the Scorff river between cohort year 1996 and 2019 by the CMR model
+-   *LogN3.csv* - 1SW returns.
+
+-   *LogN4.csv* - 2SW returns.
 
 ##### sexes/
 
--   *Ns1.csv* - csv of the genotyped individual scales of smolts in the Scorff river between cohort year 1996 and 2019
+Genotyped individual scales in the Scorff River, cohort years 1996–2019:
 
--   *Ns2.csv* - csv of the genotyped individual scales of 1SW in the Scorff river between cohort year 1996 and 2019
+-   *Ns1.csv* - smolts.
 
--   *Ns3.csv* - csv of the genotyped individual scales of 2SW in the Scorff river between cohort year 1996 and 2019
+-   *Ns3.csv* - 1SW returns.
+
+-   *Ns4.csv* - 2SW returns.
 
 ##### scales/
 
--   *S1.csv* - csv of the individual scale length of the smolts (from smolt scales) in the Scorff river between cohort year 1996 and 2019
+Individual scale lengths in the Scorff River, cohort years 1996–2019:
 
--   *S1surv.csv* - csv of the individual scale length of the surviving smolts (from adult scales) in the Scorff river between cohort year 1996 and 2019
+-   *S1.csv* - smolts (from smolt scales).
 
--   *S2.csv* - csv of the individual scale length of the post-smolts (from adult scales) in the Scorff river between cohort year 1996 and 2019
+-   *S1surv.csv* - surviving smolts (reconstructed from adult scales).
 
--   *S2m.csv* - csv of the individual scale length of the maturing post-smolts (from 1SW adult scales) in the Scorff river between cohort year 1996 and 2019
+-   *S2.csv* - post-smolts (reconstructed from adult scales).
 
--   *S2nm.csv* - csv of the individual scale length of the non-maturing post-smolts (from 2SW adult scales) in the Scorff river between cohort year 1996 and 2019
+-   *S2m.csv* - maturing post-smolts (reconstructed from 1SW returns scales).
 
-#### Realdata
+-   *S2nm.csv* - non-maturing post-smolts (reconstructed from 2SW returns scales).
 
-Composed of models folders : M[0-9]/
+#### Realdata/
 
-##### General
+A subfolder with formatted files for model fitting, organised in model folders `M[0-9]/`.
 
--   *data.qs* - qs file of all the data used in the model
+-   *data.qs* - all data passed to the model.
 
--   *const.qs* - qs file of all the constants used in the model
+-   *const.qs* - all constants passed to the model (dimensions, sample sizes, length bounds, fixed survivals).
 
 ##### M[0-9]/
 
--   *monitor1.qs* - qs file of all monitored estimated parameters for results
+-   *monitor1.qs* - monitored parameters retained for results.
 
--   *monitor2.qs* - qs file of all monitored data parameters for loo
+-   *monitor2.qs* - monitored parameters retained for PSIS-LOO comparison.
 
--   *inits_chain[1-6].qs* - qs file of starting values for high level parameters to start all the MCMC chains
+-   *inits_chain[1-6].qs* - initial values for the high-level parameters, on file per MCMC chain.
 
--   *inits_1chain.qs* - qs file of starting values for all parameters to start one MCMC chain
+-   *inits_1chain.qs* - initial values for all parameters, for a single chain (compilation).
 
--   *inits_nchains.qs* - qs file of starting values for all parameters to start all the MCMC chains
+-   *inits_nchains.qs* - initial values for all parameters, for all chains (running).
 
-### Functions
+### Functions/
 
-#### R functions
+A folder with all function necessary for the project, organised two subfolders `rfunctions/` (all R functions for creating `realdata/` files) and `nimblefunctions/` (all NimbleFunction used in the models).
 
--   *f_fillNA.R* - R function that fill the scale length dataets with *NA* as all years don't have the same sample size
+#### R functions/
 
--   *f_geninit.R* - R function that generates initial values for high level parameters to start MCMC chains.
+-   *f_fillNA.R* - pads the scale-length datasets with *NA* so that all cohorts share the same number of rows despite differing sample sizes.
 
--   *f_round.R* - R function that uses ceiling or floor functions depending to calculate the min and max values of scale length structure and ensure to include extreme values
+-   *f_geninit.R* - generates initial values for the high-level parameters to start the MCMC chains.
 
-#### Nimble functions
+-   *f_round.R* - round down (floor) or up (ceiling) to set the min and max of the length axis, ensuring all observed lengths fall inside the discretised range.
 
--   *nf_l.R* - nimbleFunction that calculate the mean length within each length class based on the mean and the sd of an assumed gaussian distribution of length at the population level.
+#### Nimble functions/
 
--   *nf_pi.R* - nimbleFunction that calculate the proportion of individuals within each length class based on the mean and the sd of an assumed gaussian distribution of length at the population level.
+-   *nf_l.R* - computes the mean length within each length class, given the mean and sd of the assumed Gaussian length distribution at the population level.
 
--   *nf_res.R* - nimbleFunction that back calculate mean and sd of an assumed gaussian distribution of length at the population level based on the number of individuals within each length class and the mean length within each length class.
+-   *nf_pi.R* - computes the proportion of individuals within each length class, given the mean and sd of the assumed Gaussian length distribution at the population level.
 
-### Models
+-   *nf_res.R* - back-calculates the mean and sd of the population-level length distribution from the number of individuals and the mean length in each length class.
 
-Composed of models folders : M[0-9]/
+### Models/
 
--   *model_code.R* - R code of the different models
+A folder with all model codes, organised in model folders `M[0-9]/`.
 
-### Run
+#### M[0-9]/
 
--   *model_save.R* - R script used before running the model to set up all the variables before running the model. It construct the *monitor.qs* and *inits.qs* files
+-   *model_code.R* - NIMBLE model code (one variant per model folder).
 
--   ***run_model.R*** **- R script to run the different models**
+### Run/
 
--   *debug_model.R* - R script to debug any problem when running a model
+A folder with all the scripts needed to fit the models.
 
-### Saves
+-   *model_save.R* - sets up the monitors and initial values, producing the *monitor.qs* and *inits.qs* files.
 
-Composed of models folders : M[0-9]/
+-   ***run_model.R*** **- fits the models.**
 
--   *MCMC.qs* - qs file saved at the end of the MCMC procedure, it includes both monitored posteriors **(not included in the repository as too heavy)**
+-   *debug_model.R* - helper for diagnosing problems encountered while fitting.
 
--   *run_info.txt* - txt about the information of the running model
+### Saves/
 
-### Graphs
+A folder with all saved MCMC outputs, organised in model folders `M[0-9]/`.
 
-#### Figure
+#### M[0-9]/
+
+-   *MCMC.qs* - posterior samples saved at the end of the MCMC run **(not included in the repository -too heavy)**
+
+-   *run_info.txt* - metadata (settings, timing) for the fitted model.
+
+### Graphs/
+
+A folder with all the scripts needed to get the figures and tables outputs from the main manuscript and the supplementary material.
+
+#### Figures/
 
 -   *fig4_structure.R* - R script to recreate Figure 4: Annual variation in length distribution
 
@@ -257,7 +271,7 @@ Composed of models folders : M[0-9]/
 
 -   *figA7_scatter.R* - R script to recreate figures of Annexe 7.2 (A7.2.1 & A7.2.2): Annual variation in length-dependent effect on population-level vital rates
 
-#### Table
+#### Tables/
 
 -   *tab1_loo.R* - R script to recreate Table 1: PSIS-LOO model comparison for the influence of sex, length-independent, and length-dependent effects on vital rates modelling
 
@@ -275,65 +289,77 @@ Composed of models folders : M[0-9]/
 
 -   *tabA5_ppc-alpha.R* - R script to recreate table of Annexe 5.2 (A5.2.6): Posterior Predictive Check (PPC) of vital rates alpha parameters estimates
 
-### Results
+### Results/
 
-Composed of models folders : M[0-9]/
+#### Figures/
 
-#### General
+-   *fig1.pdf* - Figure 1:Stage-structured model of the marine phase of the salmon life cycle, with time steps indicated.
+-   *fig2.pdf* - Figure 2: Photographs of salmon scales from a smolt (left), a 1SW (middle), and a 2SW (right), each sampled from a different individual, showing the smolt mark (green line) and the post-smolt mark (purple line).
+-   *fig3.pdf* - Figure 3: Schematic representation of the inference process of length-dependent vital rates.
+-   *fig4.pdf* - Figure 4: Annual variations in length distributions estimated by the best-supported model (M1).
+-   *fig5.pdf* - Figure 5: Annual length-dependent survival and maturation rates estimated from the best-supported model (M1).
+-   *fig6.pdf* - Figure 6: Annual variation in population-level survival and maturation rates, integrated across all length classes, with their length-dependent and length-independent components, estimated from the best-supported model (M1).
+-   *figA1.1.pdf* - Figure A1.1: Annual abundance of smolts, 1SW and 2SW adults in the River Scorff estimated from the CMR model, by year of smolt migration (1996-2019).
+-   *figA1.2.pdf* - Figure A1.2: Annual proportion of females in the sample of genotyped scales in the River Scorff, by year of smolt migration (1996-2019).
+-   *figA1.3.pdf* - Figure A1.3: Annual length distributions derived from scale samples for smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts in the River Scorff, by year of smolt migration (1996-2019).
 
--   *tab1.csv* - Table 1: PSIS-LOO model comparison for the influence of sex, length-independent, and length-dependent effects on vital rates modelling
+##### M[0-9]/
 
-#### M[0-9]/
+-   *figA5.1.1.pdf* - Figure A5.1.1: Annual abundance of smolts, 1SW and 2SW in the River Scorff estimated from the CMR model (red) and from the IPM² model (black), by year of smolt migration (1996-2019).
+-   *figA5.1.2.pdf* - Figure A5.1.2: Annual proportion of females among genotyped scales (red) and as estimated from the IPM² model (black), for smolts, 1SW and 2SW in the River Scorff, by year of smolt migration (1996-2019).
+-   *figA5.1.3.pdf* - Figure A5.1.3: Annual length distributions derived from scale samples (red) and as estimated from the IPM² model (black), for smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts in the River Scorff, by year of smolt migration (1996-2019).
 
--   *figA5.1.1.pdf* - Figure A5.1.1: Annual estimated abundance posterior distributions against data values
+#### Tables/
 
--   *figA5.1.2.pdf* - Figure A5.1.2: Annual estimated sex-ratio posterior distributions against data values
+-   *tab1.csv* - Table 1: PSIS-LOO model comparison for the influence of sex, length-independent, and length-dependent effects of survival and maturation modelling.
+-   *tabA1.2.csv* - Table A1.2: Number of scale samples used to inform sex ratio, by stage (smolt, 1SW, 2SW) and year of smolt migration (1996-2019).
+-   *tabA1.3.csv* - Table A1.3 Number of scale samples analysed to characterise length distributions, by stage (smolt, 1SW, 2SW) and year of smolt migration (1996-2019). One scale per fish was analysed.
 
--   *figA5.1.3.pdf* - Figure A5.1.3: Annual estimated length-distribution posterior distributions against data values
+##### M[0-9]/
 
-<!-- -->
+-   *tabA4.1.csv* - Table A4.1: Convergence diagnosis of each IPM² model (Gelman-Rubin-Brooks diagnostic, Geweke diagnostic & ESS diagnostic).
 
--   *tabA4.1.csv* - Table A4.1: Convergence diagnosis of each model (Gelman-Rubin-Brooks diagnostic, Geweke diagnostic & ESS)
+-   tabA4.2.csv *-* Table A4.2: Estimated parameters summaries of each IPM² model.
 
--   tabA4.2.csv *-* Table A4.2: Estimated parameters summaries of each model
+##### M1/
 
-#### M1/
+-   *tabA5.2.1.csv* - Table A5.2.1: Bayesian p-values quantifying discrepancy between observed and replicated abundances by stage (smolt, 1SW, 2SW) and year of smolt migration (1996-2019).
 
--   *tabA5.2.1.pdf* - Table A5.2.1: Posterior Predictive Check (PPC) of abundance estimates
+-   *tabA5.2.2.csv* - Table A5.2.2: Bayesian p-values quantifying discrepancy between observed and replicated sex ratios by stage (smolt, 1SW, 2SW) and year of smolt migration (1996-2019).
 
--   *tabA5.2.2.pdf* - Table A5.2.2: Posterior Predictive Check (PPC) of sex-ratio data
+-   *tabA5.2.3.csv* - Table A5.2.3: Bayesian p-values quantifying discrepancy between observed and replicated proportion of individuals per length class by stage (smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts) and year of smolt migration (199
 
--   *tabA5.2.3.pdf* - Table A5.2.3: Posterior Predictive Check (PPC) of length-distribution data using proportions test
+-   *tabA5.2.4.csv* - Table A5.2.4: Bayesian p-values quantifying discrepancy between observed and replicated mean length by stage (smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts) and year of smolt migration (1996-2019).
 
--   *tabA5.2.4.pdf* - Table A5.2.4: Posterior Predictive Check (PPC) of length-distribution data using mean length test
+-   *tabA5.2.5.csv* - Table A5.2.5: Bayesian p-values quantifying discrepancy between observed and replicated 95% quantile ranges of length by stage (smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts) and year of smolt migration (1996-2019).
 
--   *tabA5.2.5.pdf* - Table A5.2.5: Posterior Predictive Check (PPC) of length-distribution data using 95% IQR test
+-   *tabA5.2.6A.csv* - Table A5.2.6A: Bayesian p-values testing the normality (*χ²*) and independence across years of smolt migration (*AR(1)*) of the length-independent random terms of the survival rate.
 
--   *tabA5.2.6A.pdf* - Table A5.2.6A: Posterior Predictive Check (PPC) of survival alpha parameter estimates
-
--   *tabA5.2.6B.pdf* - Table A5.2.6B: Posterior Predictive Check (PPC) of maturation alpha parameters estimates
+-   *tabA5.2.6B.csv* - Table A5.2.6B: Bayesian p-values testing the normality (*χ²*) and independence across years of smolt migration (*AR(1)*) of the length-independent random terms of the maturation rate.
 
 ------------------------------------------------------------------------
 
 ## Execution instructions
 
-1.  You first need to run *data_create.R*, *data_save.R* (at this step you can also check data using *figA1_data.R* & *tabA1_data.R*).
+Open *MODESTA.Rproj* first, then run the scripts in the following order. Raw data must already be in `data/rawdata/` (see Data availability).
 
-2.  You will also need to run the *model_save.R*.
+1.  **Prepare the data** - run *data_create.R*, then *data_save.R*. Optionally check the inputs with *figA1_data.R* and *tabA1_data.R*.
 
-3.  Then you can use the *run_model.R* script (if any issues occur, please verify previous script and use the *debug_model.R*).
+2.  **Set up the run** - run *model_save.R* to generate the monitors and initial values.
 
-4.  Finally, when *MCMC.qs* and *run_info.txt* output are created, you can use the graphs script. We recommend the following order:
+3.  **Fit the models** - run *run_model.R*. If problems occur, re-check the previous steps and use *debug_model.R*.
 
-    1.  *tabA4_conv.R* & *tabA4_sum.R*
+4.  **Produce figures and tables** - once *MCMC.qs* and *run_info.txt* exist, run the post-processing scripts. Recommended order:
 
-    2.  *tab1_loo.R*
+    1.  **MCMC diagnostics -** *tabA4_conv.R*, *tabA4_sum.R*
 
-    3.  *figA5_fit.R* & *tabA5_ppc-abund.R*; *tabA5_ppc-sex.R*; *tabA5_ppc-length.R*; *tabA5_ppc-alpha.R*
+    2.  **Model comparison -** *tab1_loo.R*
 
-    4.  *fig4_structure.R*; *fig5_size.R* & *fig6_effects.R*
+    3.  **Model evaluation** - *figA5_fit.R* & *tabA5_ppc-abund.R*; *tabA5_ppc-sex.R*; *tabA5_ppc-length.R*; *tabA5_ppc-alpha.R*
 
-    5.  *figA7_cor.R* & *figA7_scatter.R*
+    4.  **Main article figures** - *fig4_structure.R*; *fig5_size.R* & *fig6_effects.R*
+
+    5.  **Supplementary material figures** -*figA7_cor.R* & *figA7_scatter.R*
 
 ------------------------------------------------------------------------
 
