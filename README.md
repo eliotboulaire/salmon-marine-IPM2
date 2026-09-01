@@ -363,58 +363,62 @@ Each script auto-installs any missing packages via a small
     ## │   │   ├── fig1.pdf
     ## │   │   ├── fig2.pdf
     ## │   │   ├── fig3.pdf
-    ## │   │   ├── fig4.pdf
-    ## │   │   ├── fig4_A.pdf
-    ## │   │   ├── fig4_B.pdf
-    ## │   │   ├── fig5.pdf
-    ## │   │   ├── fig5_A.pdf
-    ## │   │   ├── fig5_B.pdf
-    ## │   │   ├── fig6.pdf
-    ## │   │   ├── fig6_A.pdf
-    ## │   │   ├── fig6_B.pdf
     ## │   │   ├── figA1.1.pdf
     ## │   │   ├── figA1.2.pdf
     ## │   │   ├── figA1.3.pdf
     ## │   │   ├── M0
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M1
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── fig4.pdf
+    ## │   │   │   ├── fig4_A.pdf
+    ## │   │   │   ├── fig4_B.pdf
+    ## │   │   │   ├── fig5.pdf
+    ## │   │   │   ├── fig5_A.pdf
+    ## │   │   │   ├── fig5_B.pdf
+    ## │   │   │   ├── fig6.pdf
+    ## │   │   │   ├── fig6_A.pdf
+    ## │   │   │   ├── fig6_B.pdf
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   ├── figA5.1.3.pdf
+    ## │   │   │   ├── FigA7.1.1.pdf
+    ## │   │   │   ├── FigA7.1.2.pdf
+    ## │   │   │   ├── FigA7.2.1.pdf
+    ## │   │   │   └── FigA7.2.2.pdf
     ## │   │   ├── M2
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M3
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M4
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M5
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M6
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M7
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   ├── M8
-    ## │   │   │   ├── figA5.1.1.png
-    ## │   │   │   ├── figA5.1.2.png
-    ## │   │   │   └── figA5.1.3.png
+    ## │   │   │   ├── figA5.1.1.pdf
+    ## │   │   │   ├── figA5.1.2.pdf
+    ## │   │   │   └── figA5.1.3.pdf
     ## │   │   └── M9
-    ## │   │       ├── figA5.1.1.png
-    ## │   │       ├── figA5.1.2.png
-    ## │   │       └── figA5.1.3.png
+    ## │   │       ├── figA5.1.1.pdf
+    ## │   │       ├── figA5.1.2.pdf
+    ## │   │       └── figA5.1.3.pdf
     ## │   └── tables
     ## │       ├── M0
     ## │       │   ├── tabA4.1.csv
@@ -727,14 +731,6 @@ outputs from the main manuscript and the supplementary material.
     post-smolt mark (purple line).
 -   *fig3.pdf* - Figure 3: Schematic representation of the inference
     process of length-dependent vital rates.
--   *fig4.pdf* - Figure 4: Annual variations in length distributions
-    estimated by the best-supported model (M1).
--   *fig5.pdf* - Figure 5: Annual length-dependent survival and
-    maturation rates estimated from the best-supported model (M1).
--   *fig6.pdf* - Figure 6: Annual variation in population-level survival
-    and maturation rates, integrated across all length classes, with
-    their length-dependent and length-independent components, estimated
-    from the best-supported model (M1).
 -   *figA1.1.pdf* - Figure A1.1: Annual abundance of smolts, 1SW and 2SW
     adults in the River Scorff estimated from the CMR model, by year of
     smolt migration (1996-2019).
@@ -760,6 +756,23 @@ outputs from the main manuscript and the supplementary material.
     (black), for smolts, surviving smolts, post-smolts, maturing
     post-smolts and non-maturing post-smolts in the River Scorff, by
     year of smolt migration (1996-2019).
+
+##### M1/
+
+-   *fig4.pdf* - Figure 4: Annual variations in length distributions
+    estimated by the best-supported model (M1).
+-   *fig5.pdf* - Figure 5: Annual length-dependent survival and
+    maturation rates estimated from the best-supported model (M1).
+-   *fig6.pdf* - Figure 6: Annual variation in population-level survival
+    and maturation rates, integrated across all length classes, with
+    their length-dependent and length-independent components, estimated
+    from the best-supported model (M1).
+-   *figA7.1.1.pdf* - Figure A7.1.1: Distribution of Pearson
+    correlations between the sex-specific length-independent temporal
+    parameters of maturation (alpha2) across posterior samples (M1).
+-   *figA7.1.2.pdf* - Figure A7.1.2: Distribution of Pearson
+    correlations between the sex-specific temporal series of
+    population-level maturation (Theta2) across posterior samples (M1).
 
 #### Tables/
 
