@@ -3,17 +3,10 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    data_save.R
-### Purpose: Read "data" and "const" object from data_save.R 
-###          Assemble objects used by the NIMBLE model: 
-###          (1) the "inits" list (initial values for MCMC chains to start)
-###              "inits_chain" are initial values only for certain parameters
-###              "inits_nchain" are initial values for all parameters and chains
-###          (2) the `monitor` list (monitored values to keep for results)
-###              "monitor1" are monitored parameters to compute results
-###              "monitor2" are monitored parameters to compute loo comparisons
-###          "inits" and "monitor" are saved in .qs to data/realdata/[M0-M9]/
+### Purpose: Sets up the monitors and initial values, producing
+###          the monitor.qs and inits.qs files.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -49,21 +42,23 @@ data <- qread("data/realdata/data.qs")
 const <- qread("data/realdata/const.qs")
 
 # Model functions
-source("functions/nf_res.R")
-source("functions/nf_l.R")
-source("functions/nf_pi.R")
+source("functions/nimblefunctions/nf_res.R")
+source("functions/nimblefunctions/nf_l.R")
+source("functions/nimblefunctions/nf_pi.R")
 
 ## -----------------------------------------------------------------------------
 ## 3. Define inits
 ## -----------------------------------------------------------------------------
 
 ## Inits chains
-source(paste0(HOME, "/functions/f_geninit.R"))
+source(paste0(HOME, "/functions/rfunctions/f_geninit.R"))
 
-for (i in seq_len(n_chain)) {
-  set.seed(seeds[i])
-  inits <- f_geninit(n = c(24,24,1,1,1,1,1,1,1,1,1,1,1,1,2,2))
-  qsave(inits, file = file.path("data", "realdata", paste0("inits_chain", i, ".qs")))
+for (project in projects) {
+  for (i in seq_len(n_chain)) {
+    set.seed(seeds[i])
+    inits <- f_geninit(n = c(24,24,1,1,1,1,1,1,1,1,1,1,1,1,2,2))
+    qsave(inits, file = file.path("data", "realdata", project, paste0("inits_chain", i, ".qs")))
+  }
 }
 
 ## Inits allchains
@@ -75,8 +70,8 @@ for (project in projects) {
     
     source(file.path("models", project, "model_code.R"))
     
-    inits_chains <- lapply(seq_len(n_chains), function(c) {
-      qread(file.path("data", "realdata", project, paste0("inits_chain", c, ".qs")))
+    inits_chains <- lapply(seq_len(n_chains), function(i) {
+      qread(file.path("data", "realdata", project, paste0("inits_chain", i, ".qs")))
     })
     
     inits_nchains <- lapply(inits_chains, function(inits_chain) {
@@ -137,8 +132,8 @@ build_monitor1 <- function(mualpha1, sdalpha1, beta1, mualpha2, sdalpha2, beta2)
   )
 }
 
-model_monitor1 <- tibble::tribble(
-  ~model, ~mualpha1, ~sdalpha1, ~beta1, ~mualpha2, ~sdalpha2, ~beta2,
+project_monitor1 <- tibble::tribble(
+  ~project, ~mualpha1, ~sdalpha1, ~beta1, ~mualpha2, ~sdalpha2, ~beta2,
   "M0",   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,
   "M1",   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,
   "M2",   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,   TRUE,
@@ -152,12 +147,12 @@ model_monitor1 <- tibble::tribble(
 )
 
 monitor1 <- purrr::pmap(
-  model_monitor1 %>% select(mualpha1, sdalpha1, beta1, mualpha2, sdalpha2, beta2),
+  project_monitor1 %>% select(mualpha1, sdalpha1, beta1, mualpha2, sdalpha2, beta2),
   build_monitor1
-) %>% setNames(model_monitor1$model)
+) %>% setNames(project_monitor1$project)
   
-purrr::iwalk(monitor1, function(monitor1, model) {
-  qs::qsave(monitor1, file = file.path(file.path("data", "realdata", model), "monitor1.qs"))
+purrr::iwalk(monitor1, function(monitor1, project) {
+  qs::qsave(monitor1, file = file.path(file.path("data", "realdata", project), "monitor1.qs"))
 })
 
 ## Monitor 2

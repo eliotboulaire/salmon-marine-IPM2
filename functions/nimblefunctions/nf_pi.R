@@ -9,7 +9,7 @@
 ###          Each class proportion is the Normal probability mass over the class
 ###          interval, obtained from differences of the cumulative distribution.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------

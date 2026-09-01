@@ -3,14 +3,10 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    data_create.R
-### Purpose: Read raw Scorff csv files (data_Scorff_CMR & data_Scorff_ORE).
-###          Produces csv files for each data type and stages:
-###          (1) scale-length matrices by stage & cohort,
-###          (2) genotyped sex counts by stage & cohort,
-###          and (3) log-scale CMR abundance summaries by stage & cohort.
-###          Each csv files are saved to data/rawdata/
+### Purpose: Reads both data_Scorff files to build the datasets used
+###          by the model (LogN, Ns, S).
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -32,14 +28,17 @@ pkginstall <- function(packages) {
 pkginstall(c("dplyr", "tidyr"))
 
 ## -----------------------------------------------------------------------------
-## 1. Scales length data
+## 1. Import data
 ## -----------------------------------------------------------------------------
-# Import data table
+source("functions/rfunctions/f_fillNA.R")
+
 ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
+CMR <- read.csv2(file = "data/rawdata/data_Scorff_CMR.csv")
 
+## -----------------------------------------------------------------------------
+## 2. Scales length data
+## -----------------------------------------------------------------------------
 # Data create
-source("functions/f_fillNA.R")
-
 S1 <- ORE %>%
   mutate(index = row_number()) %>%
   select(index, stage, age, cohort, migration) %>%
@@ -91,11 +90,8 @@ S2nm <- ORE %>%
 write.csv2(S2nm, file = "data/rawdata/scales/S2nm.csv", row.names = FALSE)
 
 ## -----------------------------------------------------------------------------
-## 2. Scales sex data
+## 3. Scales sex data
 ## -----------------------------------------------------------------------------
-# Import data table
-ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
-
 # Data create
 Ns1 <- ORE %>%
   filter(stage == "Smolt") %>%
@@ -131,11 +127,8 @@ Ns4 <- ORE %>%
 write.csv2(Ns4, file = "data/rawdata/sexes/Ns4.csv", row.names = FALSE)
 
 ## -----------------------------------------------------------------------------
-## 3. CMR abundances
+## 4. CMR abundances
 ## -----------------------------------------------------------------------------
-# Import data table
-CMR <- read.csv2(file = "data/rawdata/data_Scorff_CMR.csv")
-
 # Data create
 LogN1 <- CMR %>%
   filter(stage == "Smolt") %>%

@@ -128,7 +128,7 @@ A subfolder organised with original data file and filtered data files per data t
 -   *data_Scorff_CMR.csv* - original data file for abundance estimates.
 
 | Columns | Description |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | stage | Life-cycle stage: "Smolt" (downstream-migrating juvenile), "1SW" (adult returning after one sea-winter), "2SW" (adult returning after two sea-winters). |
 | cohort | Year of smolt migration (smolts) or return (1SW, 2SW); 1996–2019. |
 | mean | Mean abundance estimate for the stage and year, from the lognormal CMR model. |
@@ -137,7 +137,7 @@ A subfolder organised with original data file and filtered data files per data t
 -   *data_Scorff_ORE.csv* - original data file for scale length and molecular sexing.
 
 | Columns | Description |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | index | Identifier for each individual scale. |
 | stage | Life-cycle stage: "Smolt" (downstream-migrating juvenile) or "Adults" (upstream-migrating adults). |
 | cohort | Year of smolt migration (smolts) or return (adults); 1996–2019. |
@@ -257,37 +257,37 @@ A folder with all the scripts needed to get the figures and tables outputs from 
 
 #### Figures/
 
--   *fig4_structure.R* - R script to recreate Figure 4: Annual variation in length distribution
+-   *fig4_structure.R* - builds Figure 4.
 
--   *fig5_size.R* - R script to recreate Figure 5: Annual length-dependent vital rates
+-   *fig5_size.R* - builds Figure 5.
 
--   *fig6_effects.R* - R script to recreate Figure 6: Annual variation in population-level vital rates
+-   *fig6_effects.R* - builds Figure 6.
 
--   *figA1_data.R* - R script to recreate figures of Annexe 1 (A1.1; A1.2 & A1.3): Annual data values
+-   *figA1_data.R* - builds Appendix 1 Figures (A1.1; A1.2 & A1.3).
 
--   *figA5_fit.R* - R script to recreate figures of Annexe 5.1 (A5.1.1; A5.1.2 & A5.1.3): Annual estimated posterior distributions against data values
+-   *figA5_fit.R* - builds Appendix 5.1 Figures (A5.1.1; A5.1.2 & A5.1.3).
 
--   *figA7_cor.R* - R script to recreate figures of Annexe 7.1 (A7.1.1 & A7.1.2): Distribution of Pearson correlations between the sex-specific parameters of maturation
+-   *figA7_cor.R* - builds Appendix 7.1 Figures (A7.1.1 & A7.1.2).
 
--   *figA7_scatter.R* - R script to recreate figures of Annexe 7.2 (A7.2.1 & A7.2.2): Annual variation in length-dependent effect on population-level vital rates
+-   *figA7_scatter.R* - builds Appendix 7.2 Figures (A7.2.1 & A7.2.2).
 
 #### Tables/
 
--   *tab1_loo.R* - R script to recreate Table 1: PSIS-LOO model comparison for the influence of sex, length-independent, and length-dependent effects on vital rates modelling
+-   *tab1_loo.R* - builds Table 1.
 
--   *tabA1_data.R* - R script to recreate tables of Annexe 1 (A1.2 & A1.3): Number of scale samples analysed to characterise sex-ratios and length distributions
+-   *tabA1_data.R* - builds Appendix 1 Tables (A1.2 & A1.3).
 
--   *tabA4_conv.R* - R script to recreate table of Annexe 4 (A4.1): Convergence diagnosis of each model (Gelman-Rubin-Brooks diagnostic, Geweke diagnostic & ESS)
+-   *tabA4_conv.R* - builds Appendix 4 Table A4.1.
 
--   *tabA4_sum.R* - R script to recreate table of Annexe 4 (A4.2): Estimated parameters summaries of each model
+-   *tabA4_sum.R* - builds Appendix 4 Table A4.2.
 
--   *tabA5_ppc-abund.R* - R script to recreate table of Annexe 5.2 (A5.2.1): Posterior Predictive Check (PPC) of abundance estimates
+-   *tabA5_ppc-abund.R* - builds Appendix 5.2 Table A5.2.1.
 
--   *tabA5_ppc-sex.R* - R script to recreate table of Annexe 5.2 (A5.2.2): Posterior Predictive Check (PPC) of sex-ratio data
+-   *tabA5_ppc-sex.R* - builds Appendix 5.2 Table A5.2.2.
 
--   *tabA5_ppc-length.R* - R script to recreate table of Annexe 5.2 (A5.2.3; A5.2.4; A5.2.5): Posterior Predictive Check (PPC) of length-distribution data. 3) Proportions; 4) Mean length; 5) 95% IQR
+-   *tabA5_ppc-length.R* - builds Appendix 5.2 Tables (A5.2.3, A5.2.4 & A5.2.5).
 
--   *tabA5_ppc-alpha.R* - R script to recreate table of Annexe 5.2 (A5.2.6): Posterior Predictive Check (PPC) of vital rates alpha parameters estimates
+-   *tabA5_ppc-alpha.R* - builds Appendix 5.2 Table A5.2.6.
 
 ### Results/
 
@@ -296,9 +296,6 @@ A folder with all the scripts needed to get the figures and tables outputs from 
 -   *fig1.pdf* - Figure 1:Stage-structured model of the marine phase of the salmon life cycle, with time steps indicated.
 -   *fig2.pdf* - Figure 2: Photographs of salmon scales from a smolt (left), a 1SW (middle), and a 2SW (right), each sampled from a different individual, showing the smolt mark (green line) and the post-smolt mark (purple line).
 -   *fig3.pdf* - Figure 3: Schematic representation of the inference process of length-dependent vital rates.
--   *fig4.pdf* - Figure 4: Annual variations in length distributions estimated by the best-supported model (M1).
--   *fig5.pdf* - Figure 5: Annual length-dependent survival and maturation rates estimated from the best-supported model (M1).
--   *fig6.pdf* - Figure 6: Annual variation in population-level survival and maturation rates, integrated across all length classes, with their length-dependent and length-independent components, estimated from the best-supported model (M1).
 -   *figA1.1.pdf* - Figure A1.1: Annual abundance of smolts, 1SW and 2SW adults in the River Scorff estimated from the CMR model, by year of smolt migration (1996-2019).
 -   *figA1.2.pdf* - Figure A1.2: Annual proportion of females in the sample of genotyped scales in the River Scorff, by year of smolt migration (1996-2019).
 -   *figA1.3.pdf* - Figure A1.3: Annual length distributions derived from scale samples for smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts in the River Scorff, by year of smolt migration (1996-2019).
@@ -308,6 +305,14 @@ A folder with all the scripts needed to get the figures and tables outputs from 
 -   *figA5.1.1.pdf* - Figure A5.1.1: Annual abundance of smolts, 1SW and 2SW in the River Scorff estimated from the CMR model (red) and from the IPM² model (black), by year of smolt migration (1996-2019).
 -   *figA5.1.2.pdf* - Figure A5.1.2: Annual proportion of females among genotyped scales (red) and as estimated from the IPM² model (black), for smolts, 1SW and 2SW in the River Scorff, by year of smolt migration (1996-2019).
 -   *figA5.1.3.pdf* - Figure A5.1.3: Annual length distributions derived from scale samples (red) and as estimated from the IPM² model (black), for smolts, surviving smolts, post-smolts, maturing post-smolts and non-maturing post-smolts in the River Scorff, by year of smolt migration (1996-2019).
+
+##### M1/
+
+-   *fig4.pdf* - Figure 4: Annual variations in length distributions estimated by the best-supported model (M1).
+-   *fig5.pdf* - Figure 5: Annual length-dependent survival and maturation rates estimated from the best-supported model (M1).
+-   *fig6.pdf* - Figure 6: Annual variation in population-level survival and maturation rates, integrated across all length classes, with their length-dependent and length-independent components, estimated from the best-supported model (M1).
+-   *figA7.1.1.pdf* - Figure A7.1.1: Distribution of Pearson correlations between the sex-specific length-independent temporal parameters of maturation (alpha2) across posterior samples (M1).
+-   *figA7.1.2.pdf* - Figure A7.1.2: Distribution of Pearson correlations between the sex-specific temporal series of population-level maturation (Theta2) across posterior samples (M1).
 
 #### Tables/
 

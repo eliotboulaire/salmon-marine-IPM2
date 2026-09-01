@@ -3,9 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    tab1_loo.R
-### Purpose: Compare models using PSIS-LOO and create table 1
+### Purpose: Builds Table 1.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -54,4 +54,4 @@ compute_loo <- function(project) {
 df_loo <- map(projects, compute_loo) %>%
   list_rbind() %>%
   mutate(dlooic = looic - looic[1])
-write.csv2(df_loo, "results/tab1.csv", row.names = FALSE)
+write.csv2(df_loo, "results/tables/tab1.csv", row.names = FALSE)

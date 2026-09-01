@@ -3,11 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    debug_model.R
-### Purpose: Read all NIMBLE model objects from data_save.R and model_save.R
-###          with model_code.R to run a specific  NIMBLE models.
-###          Allows to check where are the problems encountered in run_model.R
+### Purpose: helper for diagnosing problems encountered while fitting.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -46,9 +44,9 @@ const <- qread("data/realdata/const.qs")
 source(file.path("models", project, "model_code.R"))
 
 # Model functions
-source("functions/nf_res.R")
-source("functions/nf_l.R")
-source("functions/nf_pi.R")
+source("functions/nimblefunctions/nf_res.R")
+source("functions/nimblefunctions/nf_l.R")
+source("functions/nimblefunctions/nf_pi.R")
 
 ## -----------------------------------------------------------------------------
 ## 3. Define inits and monitors

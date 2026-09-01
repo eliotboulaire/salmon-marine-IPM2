@@ -1,7 +1,19 @@
 ### ============================================================================
-### Creating table of Posterior Predictive Check on scale length data
+### Disentangling length-dependent and length-independent variations
+### in survival and maturation in Atlantic salmon
+### ----------------------------------------------------------------------------
+### File:    figA5_ppc-length.R
+### Purpose: Builds Appendix 5.2 Table A5.2.6.
+### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
+### Version: 01/09/2026
 ### ============================================================================
+
+## -----------------------------------------------------------------------------
+## 0. Setup
+## -----------------------------------------------------------------------------
 rm(list = ls())
+set.seed(123)
+
 pkginstall <- function(packages) {
   for (pkg in packages) {
     if (!require(pkg, character.only = TRUE)) {
@@ -12,19 +24,34 @@ pkginstall <- function(packages) {
     }
   }
 }
-pkginstall(c("coda", "nimble", "ggplot2", "qs", "dplyr", "tidyr"))
-set.seed(123)
-project <- paste0("M", 1)
+pkginstall(c("dplyr", "tidyr", "coda", "nimble", "qs"))
 
-## =============================================================================
-## 1. Import model, data and const
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 1. Define project settings
+## -----------------------------------------------------------------------------
+projects <- c("M1")
+
+## -----------------------------------------------------------------------------
+## 2. Import MCMC object and data
+## -----------------------------------------------------------------------------
+load_mcmc <- function(project) {
+  MCMC <- qread(paste0("saves/", project, "/MCMC.qs"))
+  MCMC %>%
+    seq_along() %>%
+    lapply(function(i) mcmc(MCMC[[i]]$samples)) %>%
+    mcmc.list()
+}
+MCMC_samples <- load_mcmc(projects)
+MCMC_matrix <- as.matrix(MCMC_samples)
+
 data  <- qread("data/realdata/data.qs")
 const <- qread("data/realdata/const.qs")
 inits <- qread(file = file.path("data", "realdata", project, "inits_1chain.qs"))
+
 source("functions/nf_l.R")
 source("functions/nf_pi.R")
 source("functions/nf_res.R")
+
 source(file.path("models", project, "model_code.R"))
 
 model_nimble <- nimbleModel(
@@ -35,31 +62,13 @@ model_nimble <- nimbleModel(
   inits = inits
 )
 compiled_model <- compileNimble(model_nimble)
-
-## =============================================================================
-## 2. Import posterior MCMC samples and reorder to match NIMBLE's internal node ordering
-## =============================================================================
-load_mcmc <- function(model) {
-  MCMC <- qread(file.path("saves", model, "MCMC.qs"))
-  MCMC %>%
-    seq_along() %>%
-    lapply(function(i) mcmc(MCMC[[i]]$samples)) %>%
-    mcmc.list()
-}
-MCMC_matrix <- as.matrix(load_mcmc(project))
-
 theta_order  <- model_nimble$topologicallySortNodes(colnames(MCMC_matrix))
 theta_order  <- model_nimble$expandNodeNames(theta_order, returnScalarComponents = TRUE)
-MCMC_matrix2 <- MCMC_matrix[, theta_order]   # reordered/expanded to match NIMBLE's internal graph
+MCMC_matrix2 <- MCMC_matrix[, theta_order]
 
-## =============================================================================
-## 3. NIMBLE function: compute chi-squared discrepancies T_obs and T_rep
-##    for one data source (e.g. LogN1, LogN3, or LogN4), for every posterior draw
-## =============================================================================
-
-## =============================================================================
-## PPC test 1 -- mean of scale lengths vs fitted mu (chi2)
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 3. PPC test 1: chi-squared discrepancies of mean scale lengths
+## -----------------------------------------------------------------------------
 nf_ppc1_scale <- nimbleFunction(
   
   setup = function(model, samples, muNode, sdNode, obsMat, nIndivPerCohort) {
@@ -75,12 +84,12 @@ nf_ppc1_scale <- nimbleFunction(
     
     nIndivPerCohort <- as.integer(nIndivPerCohort)
     
-    obsMat <- as.matrix(obsMat)   # ensure matrix, not data.frame
+    obsMat <- as.matrix(obsMat)
     
     obsMean <- numeric(nC)
     for (y in 1:nC) {
       n <- nIndivPerCohort[y]
-      x <- obsMat[1:n, y]        # trim NA padding using the true sample size
+      x <- obsMat[1:n, y]
       obsMean[y] <- mean(x)
     }
     
@@ -124,10 +133,9 @@ nf_ppc1_scale <- nimbleFunction(
   )
 )
 
-
-## =============================================================================
-## PPC test 2 -- 90% interquantile range of scale lengths vs fitted sd (chi2)
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 4. PPC test 2: chi-squared discrepancies of 90% IQR
+## -----------------------------------------------------------------------------
 nf_ppc2_scale <- nimbleFunction(
   
   setup = function(model, samples, muNode, sdNode, obsMat, nIndivPerCohort, alpha) {
@@ -226,9 +234,9 @@ nf_ppc2_scale <- nimbleFunction(
   )
 )
 
-## =============================================================================
-## PPC test 3 -- binned length-class proportions vs fitted Normal(mu, sd) (chi2)
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 5. PPC test 3: chi-squared discrepancies of length-class proportions
+## -----------------------------------------------------------------------------
 nf_ppc3_scale <- nimbleFunction(
   
   setup = function(model, samples, muNode, sdNode, obsMat, nIndivPerCohort,
@@ -317,70 +325,64 @@ nf_ppc3_scale <- nimbleFunction(
   )
 )
 
-## =============================================================================
-## 4. Build, compile, and run for each stage: smolts (1), 1SW (3), 2SW (4)
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 6. Bayesian p-values for test 1
+## -----------------------------------------------------------------------------
+compute_pB <- function(T_obs, T_rep) {
+  list(
+    pB_by_year = colMeans(T_rep >= T_obs), 
+    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))
+  )
+}
 
-## =============================================================================
-## PPC test 1 -- 
-## =============================================================================
-
-## ---- s1 ----
+# Smolt
 ppc_R1 <- nf_ppc1_scale(model_nimble, MCMC_matrix2, 'Mu_L1', 'Sd_L1', data$S1, const$I1)
 ppc_C1 <- compileNimble(ppc_R1, project = compiled_model)
 
 ppc_C1$run(MCMC_matrix2)
 T_obs1 <- ppc_C1$getTobs()
 T_rep1 <- ppc_C1$getTrep()
+res1 <- compute_pB(T_obs1, T_rep1)
 
-## ---- s1surv ----
+# Surviving smolt
 ppc_R1surv <- nf_ppc1_scale(model_nimble, MCMC_matrix2, 'Mu_L1surv', 'Sd_L1surv', data$S1surv, const$I1surv)
 ppc_C1surv <- compileNimble(ppc_R1surv, project = compiled_model)
 
 ppc_C1surv$run(MCMC_matrix2)
 T_obs1surv <- ppc_C1surv$getTobs()
 T_rep1surv <- ppc_C1surv$getTrep()
+res1surv <- compute_pB(T_obs1surv, T_rep1surv)
 
-## ---- s2 ----
+# Post-smolt
 ppc_R2 <- nf_ppc1_scale(model_nimble, MCMC_matrix2, 'Mu_L2', 'Sd_L2', data$S2, const$I2)
 ppc_C2 <- compileNimble(ppc_R2, project = compiled_model)
 
 ppc_C2$run(MCMC_matrix2)
 T_obs2 <- ppc_C2$getTobs()
 T_rep2 <- ppc_C2$getTrep()
+res2 <- compute_pB(T_obs2, T_rep2)
 
-## ---- s2m ----
+# Maturing post-smolt
 ppc_R2m <- nf_ppc1_scale(model_nimble, MCMC_matrix2, 'Mu_L2m', 'Sd_L2m', data$S2m, const$I2m)
 ppc_C2m <- compileNimble(ppc_R2m, project = compiled_model)
 
 ppc_C2m$run(MCMC_matrix2)
 T_obs2m <- ppc_C2m$getTobs()
 T_rep2m <- ppc_C2m$getTrep()
+res2m <- compute_pB(T_obs2m, T_rep2m)
 
-## ---- s2nm ----
+# Non-maturing post-smolt
 ppc_R2nm <- nf_ppc1_scale(model_nimble, MCMC_matrix2, 'Mu_L2nm', 'Sd_L2nm', data$S2nm, const$I2nm)
 ppc_C2nm <- compileNimble(ppc_R2nm, project = compiled_model)
 
 ppc_C2nm$run(MCMC_matrix2)
 T_obs2nm <- ppc_C2nm$getTobs()
 T_rep2nm <- ppc_C2nm$getTrep()
-
-
-compute_pB <- function(T_obs, T_rep) {
-  list(
-    pB_by_year = colMeans(T_rep >= T_obs),               # one p_B per year
-    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))   # one p_B, all years pooled
-  )
-}
-
-res1 <- compute_pB(T_obs1, T_rep1)
-res1surv <- compute_pB(T_obs1surv, T_rep1surv)
-res2 <- compute_pB(T_obs2, T_rep2)
-res2m <- compute_pB(T_obs2m, T_rep2m)
 res2nm <- compute_pB(T_obs2nm, T_rep2nm)
 
+# Dataframe
 pB_df1 <- data.frame(
-  year = 1996:2019,     # adjust if c doesn't index years 1:1
+  year = 1996:2019,
   Smolt  = res1$pB_by_year,
   `Surviving smolt` = res1surv$pB_by_year,
   `Post-smolt` = res2$pB_by_year,
@@ -391,85 +393,64 @@ pB_df1 <- data.frame(
 print(pB_df1, row.names = FALSE)
 write.csv2(pB_df1, file.path("results",project,"ppc_length1.csv"))
 
-pB_df2 <- pB_df1 %>%
-  pivot_longer(cols = -year, names_to = "stage", values_to = "pB") %>%
-  mutate(
-    stage = factor(stage, levels = c("Smolt", "Surviving smolt", "Post-smolt", "Maturing post-smolt", "Non-maturing post-smolt")),
-    dev   = pB - 0.5
+## -----------------------------------------------------------------------------
+## 7. Bayesian p-values for test 2
+## -----------------------------------------------------------------------------
+compute_pB <- function(T_obs, T_rep) {
+  list(
+    pB_by_year = colMeans(T_rep >= T_obs), 
+    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))
   )
-ggplot(pB_df2) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.05, ymax = 0.95,
-           alpha = 0.2, fill = "grey", colour = "black") +
-  geom_hline(yintercept = 0.5, linewidth = 1.1) +
-  geom_point(aes(x = year, y = pB), colour = "black", size = 5) +
-  geom_point(aes(x = year, y = pB, colour = dev), size = 3.8) +
-  scale_colour_gradient2(low = "blue", mid = "white", high = "red",
-                         midpoint = 0, limits = c(-0.5, 0.5),
-                         name = "Deviation\nfrom 0.5") +
-  facet_wrap(~ stage, ncol = 1) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "Year of smolt migration", y = "Bayesian p-value") +
-  theme_minimal()
+}
 
-## =============================================================================
-## PPC test 2 -- 
-## =============================================================================
-
-## ---- s1 ----
+# Smolt
 ppc_R1 <- nf_ppc2_scale(model_nimble, MCMC_matrix2, 'Mu_L1', 'Sd_L1', data$S1, const$I1, 0.25)
 ppc_C1 <- compileNimble(ppc_R1, project = compiled_model)
 
 ppc_C1$run(MCMC_matrix2)
 T_obs1 <- ppc_C1$getTobs()
 T_rep1 <- ppc_C1$getTrep()
+res1 <- compute_pB(T_obs1, T_rep1)
 
-## ---- s1surv ----
+# Surviving smolt
 ppc_R1surv <- nf_ppc2_scale(model_nimble, MCMC_matrix2, 'Mu_L1surv', 'Sd_L1surv', data$S1surv, const$I1surv, 0.25)
 ppc_C1surv <- compileNimble(ppc_R1surv, project = compiled_model)
 
 ppc_C1surv$run(MCMC_matrix2)
 T_obs1surv <- ppc_C1surv$getTobs()
 T_rep1surv <- ppc_C1surv$getTrep()
+res1surv <- compute_pB(T_obs1surv, T_rep1surv)
 
-## ---- s2 ----
+# Post-smolt
 ppc_R2 <- nf_ppc2_scale(model_nimble, MCMC_matrix2, 'Mu_L2', 'Sd_L2', data$S2, const$I2, 0.25)
 ppc_C2 <- compileNimble(ppc_R2, project = compiled_model)
 
 ppc_C2$run(MCMC_matrix2)
 T_obs2 <- ppc_C2$getTobs()
 T_rep2 <- ppc_C2$getTrep()
+res2 <- compute_pB(T_obs2, T_rep2)
 
-## ---- s2m ----
+# Maturing post-smolt
 ppc_R2m <- nf_ppc2_scale(model_nimble, MCMC_matrix2, 'Mu_L2m', 'Sd_L2m', data$S2m, const$I2m, 0.25)
 ppc_C2m <- compileNimble(ppc_R2m, project = compiled_model)
 
 ppc_C2m$run(MCMC_matrix2)
 T_obs2m <- ppc_C2m$getTobs()
 T_rep2m <- ppc_C2m$getTrep()
+res2m <- compute_pB(T_obs2m, T_rep2m)
 
-## ---- s2nm ----
+# Non-maturing post-smolt
 ppc_R2nm <- nf_ppc2_scale(model_nimble, MCMC_matrix2, 'Mu_L2nm', 'Sd_L2nm', data$S2nm, const$I2nm, 0.25)
 ppc_C2nm <- compileNimble(ppc_R2nm, project = compiled_model)
 
 ppc_C2nm$run(MCMC_matrix2)
 T_obs2nm <- ppc_C2nm$getTobs()
 T_rep2nm <- ppc_C2nm$getTrep()
-
-compute_pB <- function(T_obs, T_rep) {
-  list(
-    pB_by_year = colMeans(T_rep >= T_obs),               # one p_B per year
-    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))   # one p_B, all years pooled
-  )
-}
-
-res1 <- compute_pB(T_obs1, T_rep1)
-res1surv <- compute_pB(T_obs1surv, T_rep1surv)
-res2 <- compute_pB(T_obs2, T_rep2)
-res2m <- compute_pB(T_obs2m, T_rep2m)
 res2nm <- compute_pB(T_obs2nm, T_rep2nm)
 
+# Dataframe
 pB_df1 <- data.frame(
-  year = 1996:2019,     # adjust if c doesn't index years 1:1
+  year = 1996:2019,
   Smolt  = res1$pB_by_year,
   `Surviving smolt` = res1surv$pB_by_year,
   `Post-smolt` = res2$pB_by_year,
@@ -478,91 +459,71 @@ pB_df1 <- data.frame(
   check.names = FALSE
 )
 print(pB_df1, row.names = FALSE)
-write.csv2(pB_df1, file.path("results",project,"ppc_length2_0.25.csv"))
+write.csv2(pB_df1, file.path("results",project,"ppc_length2.csv"))
 
-pB_df2 <- pB_df1 %>%
-  pivot_longer(cols = -year, names_to = "stage", values_to = "pB") %>%
-  mutate(
-    stage = factor(stage, levels = c("Smolt", "Surviving smolt", "Post-smolt", "Maturing post-smolt", "Non-maturing post-smolt")),
-    dev   = pB - 0.5
+## -----------------------------------------------------------------------------
+## 8. Bayesian p-values for test 2
+## -----------------------------------------------------------------------------
+compute_pB <- function(T_obs, T_rep) {
+  list(
+    pB_by_year = colMeans(T_rep >= T_obs), 
+    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))
   )
-ggplot(pB_df2) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.05, ymax = 0.95,
-           alpha = 0.2, fill = "grey", colour = "black") +
-  geom_hline(yintercept = 0.5, linewidth = 1.1) +
-  geom_point(aes(x = year, y = pB), colour = "black", size = 5) +
-  geom_point(aes(x = year, y = pB, colour = dev), size = 3.8) +
-  scale_colour_gradient2(low = "blue", mid = "white", high = "red",
-                         midpoint = 0, limits = c(-0.5, 0.5),
-                         name = "Deviation\nfrom 0.5") +
-  facet_wrap(~ stage, ncol = 1) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "Year of smolt migration", y = "Bayesian p-value") +
-  theme_minimal()
+}
 
-## =============================================================================
-## PPC test 3 -- 
-## =============================================================================
 breaks_L1 <- seq(const$Min_L1, const$Max_L1, length.out = (const$L + 1))
 midbins_L1 <- (breaks_L1[1:const$L] - breaks_L1[2:(const$L+1)])/2
 breaks_L2 <- seq(const$Min_L2, const$Max_L2, length.out = (const$L + 1))
 midbins_L2 <- (breaks_L2[1:const$L] - breaks_L2[2:(const$L+1)])/2
 
-## ---- s1 ----
+# Smolt
 ppc_R1 <- nf_ppc3_scale(model_nimble, MCMC_matrix2, 'Mu_L1', 'Sd_L1', data$S1, const$I1, breaks_L1, midbins_L1)
 ppc_C1 <- compileNimble(ppc_R1, project = compiled_model)
 
 ppc_C1$run(MCMC_matrix2)
 T_obs1 <- ppc_C1$getTobs()
 T_rep1 <- ppc_C1$getTrep()
+res1 <- compute_pB(T_obs1, T_rep1)
 
-## ---- s1surv ----
+# Surviving smolt
 ppc_R1surv <- nf_ppc3_scale(model_nimble, MCMC_matrix2, 'Mu_L1surv', 'Sd_L1surv', data$S1surv, const$I1surv, breaks_L1, midbins_L1)
 ppc_C1surv <- compileNimble(ppc_R1surv, project = compiled_model)
 
 ppc_C1surv$run(MCMC_matrix2)
 T_obs1surv <- ppc_C1surv$getTobs()
 T_rep1surv <- ppc_C1surv$getTrep()
+res1surv <- compute_pB(T_obs1surv, T_rep1surv)
 
-## ---- s2 ----
+# Post-smolt
 ppc_R2 <- nf_ppc3_scale(model_nimble, MCMC_matrix2, 'Mu_L2', 'Sd_L2', data$S2, const$I2, breaks_L2, midbins_L2)
 ppc_C2 <- compileNimble(ppc_R2, project = compiled_model)
 
 ppc_C2$run(MCMC_matrix2)
 T_obs2 <- ppc_C2$getTobs()
 T_rep2 <- ppc_C2$getTrep()
+res2 <- compute_pB(T_obs2, T_rep2)
 
-## ---- s2m ----
+# Maturing post-smolt
 ppc_R2m <- nf_ppc3_scale(model_nimble, MCMC_matrix2, 'Mu_L2m', 'Sd_L2m', data$S2m, const$I2m, breaks_L2, midbins_L2)
 ppc_C2m <- compileNimble(ppc_R2m, project = compiled_model)
 
 ppc_C2m$run(MCMC_matrix2)
 T_obs2m <- ppc_C2m$getTobs()
 T_rep2m <- ppc_C2m$getTrep()
+res2m <- compute_pB(T_obs2m, T_rep2m)
 
-## ---- s2nm ----
+# Non-maturing post-smolt
 ppc_R2nm <- nf_ppc3_scale(model_nimble, MCMC_matrix2, 'Mu_L2nm', 'Sd_L2nm', data$S2nm, const$I2nm, breaks_L2, midbins_L2)
 ppc_C2nm <- compileNimble(ppc_R2nm, project = compiled_model)
 
 ppc_C2nm$run(MCMC_matrix2)
 T_obs2nm <- ppc_C2nm$getTobs()
 T_rep2nm <- ppc_C2nm$getTrep()
-
-compute_pB <- function(T_obs, T_rep) {
-  list(
-    pB_by_year = colMeans(T_rep >= T_obs),               # one p_B per year
-    pB_pooled  = mean(rowSums(T_rep) >= rowSums(T_obs))   # one p_B, all years pooled
-  )
-}
-
-res1 <- compute_pB(T_obs1, T_rep1)
-res1surv <- compute_pB(T_obs1surv, T_rep1surv)
-res2 <- compute_pB(T_obs2, T_rep2)
-res2m <- compute_pB(T_obs2m, T_rep2m)
 res2nm <- compute_pB(T_obs2nm, T_rep2nm)
 
+# Dataframe
 pB_df1 <- data.frame(
-  year = 1996:2019,     # adjust if c doesn't index years 1:1
+  year = 1996:2019,
   Smolt  = res1$pB_by_year,
   `Surviving smolt` = res1surv$pB_by_year,
   `Post-smolt` = res2$pB_by_year,
@@ -572,23 +533,3 @@ pB_df1 <- data.frame(
 )
 print(pB_df1, row.names = FALSE)
 write.csv2(pB_df1, file.path("results",project,"ppc_length3.csv"))
-
-pB_df2 <- pB_df1 %>%
-  pivot_longer(cols = -year, names_to = "stage", values_to = "pB") %>%
-  mutate(
-    stage = factor(stage, levels = c("Smolt", "Surviving smolt", "Post-smolt", "Maturing post-smolt", "Non-maturing post-smolt")),
-    dev   = pB - 0.5
-  )
-ggplot(pB_df2) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.05, ymax = 0.95,
-           alpha = 0.2, fill = "grey", colour = "black") +
-  geom_hline(yintercept = 0.5, linewidth = 1.1) +
-  geom_point(aes(x = year, y = pB), colour = "black", size = 5) +
-  geom_point(aes(x = year, y = pB, colour = dev), size = 3.8) +
-  scale_colour_gradient2(low = "blue", mid = "white", high = "red",
-                         midpoint = 0, limits = c(-0.5, 0.5),
-                         name = "Deviation\nfrom 0.5") +
-  facet_wrap(~ stage, ncol = 1) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "Year of smolt migration", y = "Bayesian p-value") +
-  theme_minimal()

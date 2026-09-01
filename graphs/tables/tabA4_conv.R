@@ -2,10 +2,10 @@
 ### Disentangling length-dependent and length-independent variations
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
-### File:   tabA4_conv.R
-### Purpose: Create MCMC convergence tables
+### File:    tabA4_conv.R
+### Purpose: Builds Appendix 4 Table A4.1.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ compute_diag <- function(project) {
     left_join(diag3, by = "Parameter") %>%
     dplyr::select(Parameter, Rhat, starts_with("zchain"), Effective)
   
-  write.csv2(x = diag, file = paste0("results/", project, "/tabA4.1.csv"), row.names = FALSE)
+  write.csv2(x = diag, file = paste0("results/tables/", project, "/tabA4.1.csv"), row.names = FALSE)
 }
 
 ## -----------------------------------------------------------------------------

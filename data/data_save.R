@@ -3,14 +3,10 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    data_save.R
-### Purpose: Read each csv files created with data_create.R 
-###          Assemble objects used by the NIMBLE model: 
-###          (1) the "data" list (observations)
-###          (2) the `const` list (dimensions, sample sizes,
-###              length bounds, fixed survivals).
-###          data and const are saved in .qs to data/realdata/
+### Purpose: Assembles LogN, Ns, S datasets into the model
+###          inputs data.qs and const.qs.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -100,7 +96,7 @@ qs::qsave(data, file = paste0(HOME, "/data/realdata/data.qs"))
 ## -----------------------------------------------------------------------------
 ## 3. Define "const" file
 ## -----------------------------------------------------------------------------
-source(paste0(HOME, "/functions/f_round.R"))
+source(paste0(HOME, "/functions/rfunctions/f_round.R"))
 
 I1 <- as.numeric(apply(S1, 2, function(x) sum(!is.na(x))))
 Min_L1 <- f_round(min(S1, na.rm = TRUE), digit = 1, method = 1)

@@ -11,7 +11,7 @@
 ###          node group (typically C for per-cohort nodes, S for per-sex nodes,
 ###          1 for scalars), in the fixed order below.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------

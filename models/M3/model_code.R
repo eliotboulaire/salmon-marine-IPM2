@@ -11,7 +11,7 @@
 ###          - Maturation (Stage 2 -> 2m/2nm) is a length-dependent logistic function,
 ###          - Post-maturation survival (stage 2m/2nm- > 3/4) is fixed.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 model_code <- nimbleCode({

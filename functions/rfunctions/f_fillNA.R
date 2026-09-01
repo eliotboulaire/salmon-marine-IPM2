@@ -9,7 +9,7 @@
 ###          (with unequal numbers of scales per year) into a rectangular
 ###          [scale x cohort] matrix.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------

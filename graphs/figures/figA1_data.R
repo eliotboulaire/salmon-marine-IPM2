@@ -3,9 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    figA1_data.R
-### Purpose: Create data figure A1.1; A1.2 & A1.3
+### Purpose: Builds Appendix 1 Figures (A1.1; A1.2 & A1.3).
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -27,9 +27,14 @@ pkginstall <- function(packages) {
 pkginstall(c("ggplot2", "dplyr", "tidyr"))
 
 ## -----------------------------------------------------------------------------
-## 1. CMR abundance estimates
+## 1. Import data
 ## -----------------------------------------------------------------------------
 CMR <- read.csv2(file = "data/rawdata/data_Scorff_CMR.csv")
+ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
+
+## -----------------------------------------------------------------------------
+## 2. CMR abundance estimates
+## -----------------------------------------------------------------------------
 CMR2 <- CMR %>%
   mutate(
     meanlog = log(mean^2/sqrt(mean^2 + sd^2)),
@@ -75,7 +80,7 @@ figA1.1 <- ggplot() +
 figA1.1
 
 ggsave(
-  filename = "results/figA1.1.pdf",
+  filename = "results/figures/figA1.1.pdf",
   plot = figA1.1,
   width = 1961/300,
   height = 1440/300,
@@ -83,9 +88,8 @@ ggsave(
 )
 
 ## -----------------------------------------------------------------------------
-## 2. Scale sex data
+## 3. Scale sex data
 ## -----------------------------------------------------------------------------
-ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
 ORE2 <- ORE %>%
   mutate(
     stage2 = case_when(
@@ -143,7 +147,7 @@ figA1.2 <- ggplot() +
 figA1.2
 
 ggsave(
-  filename = "results/figA1.2.pdf",
+  filename = "results/figures/figA1.2.pdf",
   plot = figA1.2,
   width = 1961/300,
   height = 1440/300,
@@ -151,10 +155,8 @@ ggsave(
 )
 
 ## -----------------------------------------------------------------------------
-## 3. Scale length data
+## 4. Scale length data
 ## -----------------------------------------------------------------------------
-ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
-
 data_L <- bind_rows(
   ORE %>%
     filter(stage == "Smolt" & !is.na(migration)) %>%
@@ -226,7 +228,7 @@ figA1.3 <- ggplot() +
 figA1.3
 
 ggsave(
-  filename = "results/figA1.3.pdf",
+  filename = "results/figures/figA1.3.pdf",
   plot = figA1.3,
   width = 1961/300,
   height = 1440/300,

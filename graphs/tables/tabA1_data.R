@@ -3,9 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    tabA1_data.R
-### Purpose: Create data sample table A1.2 & A1.3
+### Purpose: Builds Appendix 1 Tables (A1.2 & A1.3).
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -27,9 +27,14 @@ pkginstall <- function(packages) {
 pkginstall(c("ggplot2", "dplyr", "tidyr"))
 
 ## -----------------------------------------------------------------------------
-## 1. Scale sex data
+## 1. Import data
 ## -----------------------------------------------------------------------------
+CMR <- read.csv2(file = "data/rawdata/data_Scorff_CMR.csv")
 ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
+
+## -----------------------------------------------------------------------------
+## 2. Scale sex data
+## -----------------------------------------------------------------------------
 ORE2 <- ORE %>%
   mutate(
     stage2 = case_when(
@@ -49,12 +54,11 @@ tabA1.2 <- ORE2 %>%
   ) %>%
   pivot_wider(values_from = Tot, names_from = stage2) %>%
   rename(years = cohort)
-write.csv2(tabA1.2, file = "results/tabA1.2.csv", row.names = FALSE)
+write.csv2(tabA1.2, file = "results/tables/tabA1.2.csv", row.names = FALSE)
 
 ## -----------------------------------------------------------------------------
-## 2. Scale length data
+## 3. Scale length data
 ## -----------------------------------------------------------------------------
-ORE <- read.csv2(file = "data/rawdata/data_Scorff_ORE.csv")
 ORE2 <- ORE %>%
   mutate(
     stage2 = case_when(
@@ -74,4 +78,4 @@ tabA1.3 <- ORE2 %>%
   ) %>%
   pivot_wider(values_from = Tot, names_from = stage2) %>%
   rename(years = cohort)
-write.csv2(tabA1.3, file = "results/tabA1.3.csv", row.names = FALSE)
+write.csv2(tabA1.3, file = "results/tables/tabA1.3.csv", row.names = FALSE)

@@ -9,7 +9,7 @@
 ###          Each class mean is the density-weighted average of length
 ###          over the class interval.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------

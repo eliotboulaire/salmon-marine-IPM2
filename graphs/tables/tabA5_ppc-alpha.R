@@ -1,7 +1,19 @@
 ### ============================================================================
-### Creating table of Posterior Predictive Check on alpha estimate assumption
+### Disentangling length-dependent and length-independent variations
+### in survival and maturation in Atlantic salmon
+### ----------------------------------------------------------------------------
+### File:    figA5_ppc-alpha.R
+### Purpose: Builds Appendix 5.2 Table A5.2.6.
+### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
+### Version: 01/09/2026
 ### ============================================================================
+
+## -----------------------------------------------------------------------------
+## 0. Setup
+## -----------------------------------------------------------------------------
 rm(list = ls())
+set.seed(123)
+
 pkginstall <- function(packages) {
   for (pkg in packages) {
     if (!require(pkg, character.only = TRUE)) {
@@ -12,19 +24,34 @@ pkginstall <- function(packages) {
     }
   }
 }
-pkginstall(c("coda", "nimble", "ggplot2", "qs", "dplyr", "tidyr"))
-set.seed(123)
-project <- paste0("M", 1)
+pkginstall(c("dplyr", "tidyr", "coda", "nimble", "qs"))
 
-## =============================================================================
-## 1. Import model, data and const
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 1. Define project settings
+## -----------------------------------------------------------------------------
+projects <- c("M1")
+
+## -----------------------------------------------------------------------------
+## 2. Import MCMC object and data
+## -----------------------------------------------------------------------------
+load_mcmc <- function(project) {
+  MCMC <- qread(paste0("saves/", project, "/MCMC.qs"))
+  MCMC %>%
+    seq_along() %>%
+    lapply(function(i) mcmc(MCMC[[i]]$samples)) %>%
+    mcmc.list()
+}
+MCMC_samples <- load_mcmc(projects)
+MCMC_matrix <- as.matrix(MCMC_samples)
+
 data  <- qread("data/realdata/data.qs")
 const <- qread("data/realdata/const.qs")
 inits <- qread(file = file.path("data", "realdata", project, "inits_1chain.qs"))
+
 source("functions/nf_l.R")
 source("functions/nf_pi.R")
 source("functions/nf_res.R")
+
 source(file.path("models", project, "model_code.R"))
 
 model_nimble <- nimbleModel(
@@ -35,30 +62,13 @@ model_nimble <- nimbleModel(
   inits = inits
 )
 compiled_model <- compileNimble(model_nimble)
-
-## =============================================================================
-## 2. Import posterior MCMC samples and reorder to match NIMBLE's internal node ordering
-## =============================================================================
-load_mcmc <- function(model) {
-  MCMC <- qread(file.path("saves", model, "MCMC.qs"))
-  MCMC %>%
-    seq_along() %>%
-    lapply(function(i) mcmc(MCMC[[i]]$samples)) %>%
-    mcmc.list()
-}
-MCMC_matrix <- as.matrix(load_mcmc(project))
-
 theta_order  <- model_nimble$topologicallySortNodes(colnames(MCMC_matrix))
 theta_order  <- model_nimble$expandNodeNames(theta_order, returnScalarComponents = TRUE)
 MCMC_matrix2 <- MCMC_matrix[, theta_order]
 
-## =============================================================================
-## 3. NIMBLE function: compute chi-squared discrepancies T_obs and T_rep
-##    for one data source (e.g. LogN1, LogN3, or LogN4), for every posterior draw
-## =============================================================================
-## =============================================================================
-## PPC test 1 -- chi2 on fitted year-effects (alpha) vs their own fitted hyper-Normal
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 3. PPC test 1: chi-squared discrepancies
+## -----------------------------------------------------------------------------
 nf_ppc1_alpha <- nimbleFunction(
   
   setup = function(model, samples, alphaNode, muNode, sdNode) {
@@ -69,12 +79,12 @@ nf_ppc1_alpha <- nimbleFunction(
     deps  <- model$getDependencies(theta, self = FALSE)
     
     alphaNodesExpanded <- model$expandNodeNames(alphaNode, returnScalarComponents = TRUE)
-    nT <- length(alphaNodesExpanded)   # number of years, e.g. 24
+    nT <- length(alphaNodesExpanded)
     
     muNodeExpanded <- model$expandNodeNames(muNode, returnScalarComponents = TRUE)
     sdNodeExpanded <- model$expandNodeNames(sdNode, returnScalarComponents = TRUE)
     
-    T_obs_store <- matrix(0, nrow = 1, ncol = 1)   # one column: pooled T per iteration
+    T_obs_store <- matrix(0, nrow = 1, ncol = 1)
     T_rep_store <- matrix(0, nrow = 1, ncol = 1)
   },
   
@@ -94,9 +104,8 @@ nf_ppc1_alpha <- nimbleFunction(
       muFit <- muFitVec[1]
       sdFit <- sdFitVec[1]
       
-      alphaFit <- values(model, alphaNodesExpanded)   # length nT
+      alphaFit <- values(model, alphaNodesExpanded)
       
-      # --- draw ONE replicate year-effect vector from the same fitted hyper-Normal ---
       alphaRep <- numeric(nT)
       for (t in 1:nT) alphaRep[t] <- rnorm(1, muFit, sdFit)
       
@@ -118,9 +127,9 @@ nf_ppc1_alpha <- nimbleFunction(
   )
 )
 
-## =============================================================================
-## PPC test 2 -- lag-1 autocorrelation (AR1-type) statistic on fitted year-effects
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 4. PPC test 2: lag-1 autocorrelation (AR1-type) statistic
+## -----------------------------------------------------------------------------
 nf_ppc2_alpha <- nimbleFunction(
   
   setup = function(model, samples, alphaNode, muNode, sdNode) {
@@ -179,46 +188,41 @@ nf_ppc2_alpha <- nimbleFunction(
   )
 )
 
-## =============================================================================
-## 4. Build, compile, and run for each stage: smolts (1), 1SW (3), 2SW (4)
-## =============================================================================
+## -----------------------------------------------------------------------------
+## 4. Bayesian p-values for test 1
+## -----------------------------------------------------------------------------
+compute_pB <- function(T_obs, T_rep) {
+  mean(T_rep >= T_obs)
+}
 
-## =============================================================================
-## PPC test 1 -- 
-## =============================================================================
-
-## ---- Survival ----
+# Survival
 ppc_R1 <- nf_ppc1_alpha(model_nimble, MCMC_matrix2, 'Alpha1', 'Mu_Alpha1', 'Sd_Alpha1')
 ppc_C1 <- compileNimble(ppc_R1, project = compiled_model)
 
 ppc_C1$run(MCMC_matrix2)
 T_obs1 <- ppc_C1$getTobs()
 T_rep1 <- ppc_C1$getTrep()
+res1 <- compute_pB(T_obs1, T_rep1)
 
-## ---- Maturation female ----
+# Maturation female
 ppc_R2f <- nf_ppc1_alpha(model_nimble, MCMC_matrix2, 'Alpha2[,1]', 'Mu_Alpha2[1]', 'Sd_Alpha2[1]')
 ppc_C2f <- compileNimble(ppc_R2f, project = compiled_model)
 
 ppc_C2f$run(MCMC_matrix2)
 T_obs2f <- ppc_C2f$getTobs()
 T_rep2f <- ppc_C2f$getTrep()
+res2f <- compute_pB(T_obs2f, T_rep2f)
 
-## ---- Maturation male ----
+# Maturation male
 ppc_R2m <- nf_ppc1_alpha(model_nimble, MCMC_matrix2, 'Alpha2[,2]', 'Mu_Alpha2[2]', 'Sd_Alpha2[2]')
 ppc_C2m <- compileNimble(ppc_R2m, project = compiled_model)
 
 ppc_C2m$run(MCMC_matrix2)
 T_obs2m <- ppc_C2m$getTobs()
 T_rep2m <- ppc_C2m$getTrep()
-
-compute_pB <- function(T_obs, T_rep) {
-  mean(T_rep >= T_obs)
-}
-
-res1 <- compute_pB(T_obs1, T_rep1)
-res2f <- compute_pB(T_obs2f, T_rep2f)
 res2m <- compute_pB(T_obs2m, T_rep2m)
 
+# Dataframe
 pB_df1 <- data.frame(
   Survival  = res1,
   `Maturation female` = res2f,
@@ -228,61 +232,41 @@ pB_df1 <- data.frame(
 print(pB_df1, row.names = FALSE)
 write.csv2(pB_df1, file.path("results",project,"ppc_alpha1.csv"))
 
-pB_df2 <- pB_df1 %>%
-  pivot_longer(cols = everything(), names_to = "stage", values_to = "pB") %>%
-  mutate(
-    stage = factor(stage, levels = c("Survival", "Maturation female", "Maturation male")),
-    dev   = pB - 0.5
-  )
-ggplot(pB_df2) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.05, ymax = 0.95,
-           alpha = 0.2, fill = "grey", colour = "black") +
-  geom_hline(yintercept = 0.5, linewidth = 1.1) +
-  geom_point(aes(x = stage, y = pB), colour = "black", size = 5) +
-  geom_point(aes(x = stage, y = pB, colour = dev), size = 3.8) +
-  scale_colour_gradient2(low = "blue", mid = "white", high = "red",
-                         midpoint = 0, limits = c(-0.5, 0.5),
-                         name = "Deviation\nfrom 0.5") +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "Stage", y = "Bayesian p-value") +
-  theme_minimal()
+## -----------------------------------------------------------------------------
+## 5. Bayesian p-values for test 2
+## -----------------------------------------------------------------------------
+compute_pB <- function(T_obs, T_rep) {
+  mean(T_rep >= T_obs)
+}
 
-## =============================================================================
-## PPC test 2 -- 
-## =============================================================================
-
-## ---- Survival ----
+# Survival
 ppc_R1 <- nf_ppc2_alpha(model_nimble, MCMC_matrix2, 'Alpha1', 'Mu_Alpha1', 'Sd_Alpha1')
 ppc_C1 <- compileNimble(ppc_R1, project = compiled_model)
 
 ppc_C1$run(MCMC_matrix2)
 T_obs1 <- ppc_C1$getTobs()
 T_rep1 <- ppc_C1$getTrep()
+res1 <- compute_pB(T_obs1, T_rep1)
 
-## ---- Maturation female ----
+# Maturation female
 ppc_R2f <- nf_ppc2_alpha(model_nimble, MCMC_matrix2, 'Alpha2[,1]', 'Mu_Alpha2[1]', 'Sd_Alpha2[1]')
 ppc_C2f <- compileNimble(ppc_R2f, project = compiled_model)
 
 ppc_C2f$run(MCMC_matrix2)
 T_obs2f <- ppc_C2f$getTobs()
 T_rep2f <- ppc_C2f$getTrep()
+res2f <- compute_pB(T_obs2f, T_rep2f)
 
-## ---- Maturation male ----
+# Maturation male
 ppc_R2m <- nf_ppc2_alpha(model_nimble, MCMC_matrix2, 'Alpha2[,2]', 'Mu_Alpha2[2]', 'Sd_Alpha2[2]')
 ppc_C2m <- compileNimble(ppc_R2m, project = compiled_model)
 
 ppc_C2m$run(MCMC_matrix2)
 T_obs2m <- ppc_C2m$getTobs()
 T_rep2m <- ppc_C2m$getTrep()
-
-compute_pB <- function(T_obs, T_rep) {
-  mean(T_rep >= T_obs)
-}
-
-res1 <- compute_pB(T_obs1, T_rep1)
-res2f <- compute_pB(T_obs2f, T_rep2f)
 res2m <- compute_pB(T_obs2m, T_rep2m)
 
+# Dataframe
 pB_df1 <- data.frame(
   Survival  = res1,
   `Maturation female` = res2f,
@@ -291,22 +275,3 @@ pB_df1 <- data.frame(
 )
 print(pB_df1, row.names = FALSE)
 write.csv2(pB_df1, file.path("results",project,"ppc_alpha2.csv"))
-
-pB_df2 <- pB_df1 %>%
-  pivot_longer(cols = everything(), names_to = "stage", values_to = "pB") %>%
-  mutate(
-    stage = factor(stage, levels = c("Survival", "Maturation female", "Maturation male")),
-    dev   = pB - 0.5
-  )
-ggplot(pB_df2) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.05, ymax = 0.95,
-           alpha = 0.2, fill = "grey", colour = "black") +
-  geom_hline(yintercept = 0.5, linewidth = 1.1) +
-  geom_point(aes(x = stage, y = pB), colour = "black", size = 5) +
-  geom_point(aes(x = stage, y = pB, colour = dev), size = 3.8) +
-  scale_colour_gradient2(low = "blue", mid = "white", high = "red",
-                         midpoint = 0, limits = c(-0.5, 0.5),
-                         name = "Deviation\nfrom 0.5") +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "Stage", y = "Bayesian p-value") +
-  theme_minimal()

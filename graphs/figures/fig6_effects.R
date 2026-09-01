@@ -3,9 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    fig6_effects.R
-### Purpose: Produce figure 6 Annual variation in population-level vital rates
+### Purpose: Builds Figure 6.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ pkginstall <- function(packages) {
     }
   }
 }
-pkginstall(c("dplyr", "tidyr", "ggplot2", "coda", "qs", "ggnewscale", "relaimpo"))
+pkginstall(c("dplyr", "tidyr", "ggplot2", "coda", "nimble", "qs", "ggnewscale", "relaimpo"))
 
 ## -----------------------------------------------------------------------------
 ## 1. Define project settings
@@ -34,9 +34,9 @@ projects <- "M1"
 ## -----------------------------------------------------------------------------
 ## 2. Import MCMC object and functions
 ## -----------------------------------------------------------------------------
-source("functions/nf_l.R")
+source("functions/nimblefunctions/nf_l.R")
 Cnf_l <- compileNimble(nf_l)
-source("functions/nf_pi.R")
+source("functions/nimblefunctions/nf_pi.R")
 Cnf_pi <- compileNimble(nf_pi)
 
 load_mcmc <- function(project) {
@@ -182,7 +182,7 @@ fig6_A <- ggplot(data = data1, aes(x = cohort)) +
 fig6_A
 
 ggsave(
-  filename = "results/fig6_A.pdf",
+  filename = paste0("results/figures/", projects, "/fig6_A.pdf"),
   plot = fig6_A,
   width = 1961/300,
   height = 1440/300,
@@ -386,7 +386,7 @@ fig6_B <- ggplot(data = data3, aes(x = cohort)) +
 fig6_B
 
 ggsave(
-  filename = "results/fig6_B.pdf",
+  filename = paste0("results/figures/", projects, "/fig6_B.pdf"),
   plot = fig6_B,
   width = 1961/300,
   height = 1440/300,

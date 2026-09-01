@@ -10,7 +10,7 @@
 ###          survivors and of maturing / non-maturing post-smolts as an
 ###          abundance-weighted Normal (mu, sd), which then feeds the likelihood.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------

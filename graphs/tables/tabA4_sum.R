@@ -2,10 +2,10 @@
 ### Disentangling length-dependent and length-independent variations
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
-### File:   tabA4_conv.R
-### Purpose: Create MCMC summary tables
+### File:    tabA4_sum.R
+### Purpose: Builds Appendix 4 Table A4.2.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ compute_sum <- function(project) {
       by = "Parameter"
     )
   
-  write.csv2(x = res, file = paste0("results/", project, "/tabA4.2.csv"), row.names = FALSE)
+  write.csv2(x = res, file = paste0("results/tables/", project, "/tabA4.2.csv"), row.names = FALSE)
 }
 
 ## -----------------------------------------------------------------------------

@@ -3,12 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    run_model.R
-### Purpose: Read all NIMBLE model objects from data_save.R and model_save.R
-###          with model_code.R to run the NIMBLE models.
-###          (1) "MCMC" output are saved in .qs to saves/[M0-M9]/
-###          (2) run_info are saved in .txt to saves/[M0-M9]/
+### Purpose: Fits the models.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -44,9 +41,9 @@ data <- qread("data/realdata/data.qs")
 const <- qread("data/realdata/const.qs")
 
 # Model functions
-source("functions/nf_res.R")
-source("functions/nf_l.R")
-source("functions/nf_pi.R")
+source("functions/nimblefunctions/nf_res.R")
+source("functions/nimblefunctions/nf_l.R")
+source("functions/nimblefunctions/nf_pi.R")
 
 ## -----------------------------------------------------------------------------
 ## 3. Define MCMC settings

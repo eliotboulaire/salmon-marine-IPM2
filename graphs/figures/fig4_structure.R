@@ -3,9 +3,9 @@
 ### in survival and maturation in Atlantic salmon
 ### ----------------------------------------------------------------------------
 ### File:    fig4_structure.R
-### Purpose: Produce figure 4 of the annual variation in length distribution
+### Purpose: Builds Figure 4.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ pkginstall <- function(packages) {
     }
   }
 }
-pkginstall(c("dplyr", "tidyr", "ggplot2", "coda", "ggridges", "qs"))
+pkginstall(c("dplyr", "tidyr", "ggplot2", "coda", "nimble", "ggridges", "qs"))
 
 ## -----------------------------------------------------------------------------
 ## 1. Define project settings
@@ -34,9 +34,9 @@ projects <- "M1"
 ## -----------------------------------------------------------------------------
 ## 2. Import MCMC object and functions
 ## -----------------------------------------------------------------------------
-source("functions/nf_l.R")
+source("functions/nimblefunctions/nf_l.R")
 Cnf_l <- compileNimble(nf_l)
-source("functions/nf_pi.R")
+source("functions/nimblefunctions/nf_pi.R")
 Cnf_pi <- compileNimble(nf_pi)
 
 load_mcmc <- function(project) {
@@ -107,7 +107,7 @@ fig4_A <- ggplot() +
 fig4_A
 
 ggsave(
-  filename = "results/fig4_A.pdf",
+  filename = paste0("results/figures/", projects, "/fig4_A.pdf"),
   plot = fig4_A,
   width = 1961/300,
   height = 1440/300,
@@ -170,7 +170,7 @@ fig4_B <- ggplot() +
 fig4_B
 
 ggsave(
-  filename = "results/fig4_B.pdf",
+  filename = paste0("results/figures/", projects, "/fig4_B.pdf"),
   plot = fig4_B,
   width = 1961/300,
   height = 1440/300,

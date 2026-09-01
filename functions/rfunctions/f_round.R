@@ -8,7 +8,7 @@
 ###          Used to set the bounds of the length axis (Min_L, Max_L) so that 
 ###          all observed scale lengths fall inside the length range.
 ### Author:  ©BOULAIRE Eliot, NEVOUX Marie & RIVOT Etienne
-### Version: 17/08/2026
+### Version: 01/09/2026
 ### ============================================================================
 
 ## -----------------------------------------------------------------------------
